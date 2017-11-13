@@ -72,7 +72,7 @@ github_skip_forks: true
 
 # Twitter
 twitter_user: ihuakucha
-# twitter_tweet_button: true
+twitter_tweet_button: false
 
 # Google +1
 # google_plus_one: true
@@ -81,7 +81,7 @@ twitter_user: ihuakucha
 # Google Plus Profile
 # Hidden: No visible button, just add author information to search results
 googleplus_user: 105543758856554771135
-# googleplus_hidden: true
+googleplus_hidden: true
 
 # Pinboard
 # pinboard_user:
@@ -99,4 +99,4 @@ disqus_show_comment_count: true
 google_analytics_tracking_id:
 
 # Facebook Like
-# facebook_like: true
+facebook_like: false
