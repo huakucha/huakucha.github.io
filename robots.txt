@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://huakucha.github.io/sitemap.xml 
+Sitemap: https://huakucha.github.io/sitemap.xml 
