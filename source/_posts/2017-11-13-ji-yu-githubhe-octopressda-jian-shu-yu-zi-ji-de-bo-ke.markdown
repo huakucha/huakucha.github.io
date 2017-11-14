@@ -76,7 +76,7 @@ $ ruby --version #ruby 1.9.3p551 (2014-11-13 revision 48407)
 ###安装Octopress
 安装Ruby完成后就按照官方指南安装Octpress
 
-```shell
+```java
 #clone octopress
 $ git clone git://github.com/imathis/octopress.git octopress
 $ cd octopress
