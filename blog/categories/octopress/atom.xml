@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | 一骑当千]]></title>
   <link href="https://huakucha.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="https://huakucha.github.io/"/>
-  <updated>2017-11-14T11:21:30+08:00</updated>
+  <updated>2017-11-14T11:21:29+08:00</updated>
   <id>https://huakucha.github.io/</id>
   <author>
     <name><![CDATA[花裤衩]]></name>
@@ -46,7 +46,7 @@
 
 <p>有了Homebrew就可以安装rbenv了</p>
 
-<pre><code>$ brew update
+<pre><code class="java">$ brew update
 $ brew install rbenv
 $ brew install ruby-build
 </code></pre>

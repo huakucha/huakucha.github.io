@@ -47,20 +47,6 @@
     });
 </script>
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-109672322-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      //ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      ga.src = 'http://droidyue-tools.qiniudn.com/ga.js';
-      //ga.src = 'https://www.googletagmanager.com/gtag/js?id=UA-109672322-1';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
 
 </head>
 
@@ -163,12 +149,13 @@
 
 <p>有了Homebrew就可以安装rbenv了</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew update
-</span><span class='line'>$ brew install rbenv
-</span><span class='line'>$ brew install ruby-build</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">brew</span> <span class="n">update</span>
+</span><span class='line'><span class="n">$</span> <span class="n">brew</span> <span class="n">install</span> <span class="n">rbenv</span>
+</span><span class='line'><span class="n">$</span> <span class="n">brew</span> <span class="n">install</span> <span class="n">ruby</span><span class="o">-</span><span class="n">build</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>用rbenv安装Ruby</h3>
@@ -177,14 +164,15 @@
 
 <p>安装完成后可以用ruby &ndash;version进行验证</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rbenv install 1.9.3-p125
-</span><span class='line'>$ rbenv local 1.9.3-p125
-</span><span class='line'>$ rbenv rehash
-</span><span class='line'>$ ruby --version #ruby 1.9.3p125 (2012-02-16 revision 34643)</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rbenv</span> <span class="n">install</span> <span class="mf">1.9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p125</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rbenv</span> <span class="n">local</span> <span class="mf">1.9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p125</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rbenv</span> <span class="n">rehash</span>
+</span><span class='line'><span class="n">$</span> <span class="n">ruby</span> <span class="o">--</span><span class="n">version</span> <span class="err">#</span><span class="n">ruby</span> <span class="mf">1.9</span><span class="o">.</span><span class="mi">3</span><span class="n">p125</span> <span class="o">(</span><span class="mi">2012</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">16</span> <span class="n">revision</span> <span class="mi">34643</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>安装RVM</h3>
@@ -193,29 +181,31 @@
 
 <p>安装octopress官方提供的安装方法</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ curl -L https://get.rvm.io | bash -s stable --ruby</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="nl">https:</span><span class="c1">//get.rvm.io | bash -s stable --ruby</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>用RVM安装Ruby</h3>
 
 <p>使用rvm安装1.9.3版本的ruby，我依照之前的经验安装1.9.3-p125的版本，但在编译时出现了一些错误，继而尝试了评论中<a href="">@lance_lan</a>提到得1.9.3-p551版本才安装成功。</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rvm install ruby-1.9.3-p551 --with-gcc=clang
-</span><span class='line'>$ rvm use 1.9.3-p551
-</span><span class='line'>$ rvm rubygems latest
-</span><span class='line'>$ ruby --version #ruby 1.9.3p551 (2014-11-13 revision 48407)</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rvm</span> <span class="n">install</span> <span class="n">ruby</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p551</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">gcc</span><span class="o">=</span><span class="n">clang</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rvm</span> <span class="n">use</span> <span class="mf">1.9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p551</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rvm</span> <span class="n">rubygems</span> <span class="n">latest</span>
+</span><span class='line'><span class="n">$</span> <span class="n">ruby</span> <span class="o">--</span><span class="n">version</span> <span class="err">#</span><span class="n">ruby</span> <span class="mf">1.9</span><span class="o">.</span><span class="mi">3</span><span class="n">p551</span> <span class="o">(</span><span class="mi">2014</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">13</span> <span class="n">revision</span> <span class="mi">48407</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>安装Octopress</h3>
 
 <p>安装Ruby完成后就按照官方指南安装Octpress</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -226,17 +216,18 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#clone octopress
-</span><span class='line'>$ git clone git://github.com/imathis/octopress.git octopress
-</span><span class='line'>$ cd octopress
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">clone</span> <span class="n">octopress</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="nl">git:</span><span class="c1">//github.com/imathis/octopress.git octopress</span>
+</span><span class='line'><span class="n">$</span> <span class="n">cd</span> <span class="n">octopress</span>
 </span><span class='line'>
-</span><span class='line'>#安装依赖
-</span><span class='line'>$ gem install bundler
-</span><span class='line'>$ rbenv rehash  # 如果你刚才用了rbenv
-</span><span class='line'>$ bundle install
+</span><span class='line'><span class="err">#</span><span class="n">安装依赖</span>
+</span><span class='line'><span class="n">$</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">bundler</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rbenv</span> <span class="n">rehash</span>  <span class="err">#</span> <span class="n">如果你刚才用了rbenv</span>
+</span><span class='line'><span class="n">$</span> <span class="n">bundle</span> <span class="n">install</span>
 </span><span class='line'>
-</span><span class='line'>#安装octopress默认主题
-</span><span class='line'>$ rake install</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="err">#</span><span class="n">安装octopress默认主题</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">install</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <hr />
@@ -247,8 +238,9 @@
 
 <p>然后运行以下命令，并依照提示完成github和Octopress的关联</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake setup_github_pages</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">setup_github_pages</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <hr />
@@ -257,20 +249,22 @@
 
 <h3>生成博客</h3>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake generate
-</span><span class='line'>$ rake deploy</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>把生成后的代码上传到github</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git add .
-</span><span class='line'>$ git commit -m 'create blog'
-</span><span class='line'>$ git push origin source</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="err">&#39;</span><span class="n">create</span> <span class="n">blog</span><span class="err">&#39;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>完成后等待一段时间后就能访问<code>http://username.github.io</code>看到自己的博客了</p>
@@ -279,7 +273,7 @@
 
 <p>配置文件路径为<code>~/octopress/_config.yml</code></p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -290,42 +284,44 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>url:                # For rewriting urls for RSS, etc
-</span><span class='line'>title:              # Used in the header and title tags
-</span><span class='line'>subtitle:           # A description used in the header
-</span><span class='line'>author:             # Your name, for RSS, Copyright, Metadata
-</span><span class='line'>simple_search:      # Search engine for simple site search
-</span><span class='line'>description:        # A default meta description for your site
-</span><span class='line'>date_format:        # Format dates using Ruby's date strftime syntax
-</span><span class='line'>subscribe_rss:      # Url for your blog's feed, defauts to /atom.xml
-</span><span class='line'>subscribe_email:    # Url to subscribe by email (service required)
-</span><span class='line'>category_feeds:     # Enable per category RSS feeds (defaults to false in 2.1)
-</span><span class='line'>email:              # Email address for the RSS feed if you want it.</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nl">url:</span>                <span class="err">#</span> <span class="n">For</span> <span class="n">rewriting</span> <span class="n">urls</span> <span class="k">for</span> <span class="n">RSS</span><span class="o">,</span> <span class="n">etc</span>
+</span><span class='line'><span class="nl">title:</span>              <span class="err">#</span> <span class="n">Used</span> <span class="n">in</span> <span class="n">the</span> <span class="n">header</span> <span class="n">and</span> <span class="n">title</span> <span class="n">tags</span>
+</span><span class='line'><span class="nl">subtitle:</span>           <span class="err">#</span> <span class="n">A</span> <span class="n">description</span> <span class="n">used</span> <span class="n">in</span> <span class="n">the</span> <span class="n">header</span>
+</span><span class='line'><span class="nl">author:</span>             <span class="err">#</span> <span class="n">Your</span> <span class="n">name</span><span class="o">,</span> <span class="k">for</span> <span class="n">RSS</span><span class="o">,</span> <span class="n">Copyright</span><span class="o">,</span> <span class="n">Metadata</span>
+</span><span class='line'><span class="nl">simple_search:</span>      <span class="err">#</span> <span class="n">Search</span> <span class="n">engine</span> <span class="k">for</span> <span class="n">simple</span> <span class="n">site</span> <span class="n">search</span>
+</span><span class='line'><span class="nl">description:</span>        <span class="err">#</span> <span class="n">A</span> <span class="k">default</span> <span class="n">meta</span> <span class="n">description</span> <span class="k">for</span> <span class="n">your</span> <span class="n">site</span>
+</span><span class='line'><span class="nl">date_format:</span>        <span class="err">#</span> <span class="n">Format</span> <span class="n">dates</span> <span class="n">using</span> <span class="n">Ruby</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">date</span> <span class="n">strftime</span> <span class="n">syntax</span>
+</span><span class='line'><span class="nl">subscribe_rss:</span>      <span class="err">#</span> <span class="n">Url</span> <span class="k">for</span> <span class="n">your</span> <span class="n">blog</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">feed</span><span class="o">,</span> <span class="n">defauts</span> <span class="n">to</span> <span class="o">/</span><span class="n">atom</span><span class="o">.</span><span class="na">xml</span>
+</span><span class='line'><span class="nl">subscribe_email:</span>    <span class="err">#</span> <span class="n">Url</span> <span class="n">to</span> <span class="n">subscribe</span> <span class="n">by</span> <span class="nf">email</span> <span class="o">(</span><span class="n">service</span> <span class="n">required</span><span class="o">)</span>
+</span><span class='line'><span class="nl">category_feeds:</span>     <span class="err">#</span> <span class="n">Enable</span> <span class="n">per</span> <span class="n">category</span> <span class="n">RSS</span> <span class="nf">feeds</span> <span class="o">(</span><span class="n">defaults</span> <span class="n">to</span> <span class="kc">false</span> <span class="n">in</span> <span class="mf">2.1</span><span class="o">)</span>
+</span><span class='line'><span class="nl">email:</span>              <span class="err">#</span> <span class="n">Email</span> <span class="n">address</span> <span class="k">for</span> <span class="n">the</span> <span class="n">RSS</span> <span class="n">feed</span> <span class="k">if</span> <span class="n">you</span> <span class="n">want</span> <span class="n">it</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>编辑完成后</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake generate
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'>$ git add .
-</span><span class='line'>$ git commit -m "settings" 
-</span><span class='line'>$ git push origin source
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;settings&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'>$ rake deploy</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>安装第三方主题</h3>
 
 <p>Octopress有许多第三方主题可以选择，首先在<a href="http://opthemes.com/">这里</a>上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -339,20 +335,21 @@
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#这里以安装allenhsu定制的greyshade主题为例，原作者是shashankmehta
-</span><span class='line'>$ git clone git@github.com:allenhsu/greyshade.git .themes/greyshade
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">这里以安装allenhsu定制的greyshade主题为例</span><span class="err">，</span><span class="n">原作者是shashankmehta</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github.com</span><span class="o">:</span><span class="n">allenhsu</span><span class="o">/</span><span class="n">greyshade</span><span class="o">.</span><span class="na">git</span> <span class="o">.</span><span class="na">themes</span><span class="o">/</span><span class="n">greyshade</span>
 </span><span class='line'>
-</span><span class='line'>#Substitue 'color' with your highlight color
-</span><span class='line'>$ echo "\$greyshade: color;" &gt;&gt; sass/custom/_colors.scss 
+</span><span class='line'><span class="err">#</span><span class="n">Substitue</span> <span class="err">&#39;</span><span class="n">color</span><span class="err">&#39;</span> <span class="n">with</span> <span class="n">your</span> <span class="n">highlight</span> <span class="n">color</span>
+</span><span class='line'><span class="n">$</span> <span class="n">echo</span> <span class="s">&quot;\$greyshade: color;&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">sass</span><span class="o">/</span><span class="n">custom</span><span class="o">/</span><span class="n">_colors</span><span class="o">.</span><span class="na">scss</span>
 </span><span class='line'>
-</span><span class='line'>$ rake "install[greyshade]"
-</span><span class='line'>$ rake generate
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="s">&quot;install[greyshade]&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'>$ git add .
-</span><span class='line'>$ git commit -m "theme" 
-</span><span class='line'>$ git push origin source
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;theme&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'>$ rake deploy</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>定制第三方主题</h3>
@@ -363,30 +360,32 @@
 
 <p>这个aboutme对应的html为<code>/source/_includes/custom/navigation.html</code></p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;li&gt;&lt;a href="/"&gt;Blog&lt;/a&gt;&lt;/li&gt;
-</span><span class='line'>&lt;li&gt;&lt;a href="http://about.me/shashankmehta"&gt;About&lt;/a&gt;&lt;/li&gt;
-</span><span class='line'>&lt;li&gt;&lt;a href="/blog/archives"&gt;Archives&lt;/a&gt;&lt;/li&gt;</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="o">&gt;</span><span class="n">Blog</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;http://about.me/shashankmehta&quot;</span><span class="o">&gt;</span><span class="n">About</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;/blog/archives&quot;</span><span class="o">&gt;</span><span class="n">Archives</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>把其中的<code>http://about.me/shashankmehta</code>替换成需要的url，替换完之后</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake generate
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'>$ git add .
-</span><span class='line'>$ git commit -m "theme" 
-</span><span class='line'>$ git push origin source
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;theme&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'>$ rake deploy</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <h3>支持中文标签</h3>
@@ -397,14 +396,16 @@
 
 <p>将<code>plugins/category_list_tag.rb</code>中的</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>category_url = File.join(category_dir, category.gsub(/_|\P{Word}/, '-').gsub(/-{2,}/, '-').downcase)</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">category_url</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">category_dir</span><span class="o">,</span> <span class="n">category</span><span class="o">.</span><span class="na">gsub</span><span class="o">(/</span><span class="n">_</span><span class="o">|</span><span class="err">\</span><span class="n">P</span><span class="o">{</span><span class="n">Word</span><span class="o">}/,</span> <span class="sc">&#39;-&#39;</span><span class="o">).</span><span class="na">gsub</span><span class="o">(/-{</span><span class="mi">2</span><span class="o">,}/,</span> <span class="sc">&#39;-&#39;</span><span class="o">).</span><span class="na">downcase</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>替换成</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>category_url = File.join(category_dir, category.to_url.downcase)</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">category_url</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">category_dir</span><span class="o">,</span> <span class="n">category</span><span class="o">.</span><span class="na">to_url</span><span class="o">.</span><span class="na">downcase</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>这样你的博客就可以支持中文标签的跳转了。</p>
@@ -417,27 +418,28 @@
 
 <h3>创建博文</h3>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#如果用的是终端
-</span><span class='line'>$ rake new_post['title']
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">如果用的是终端</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">new_post</span><span class="o">[</span><span class="err">&#39;</span><span class="n">title</span><span class="err">&#39;</span><span class="o">]</span>
 </span><span class='line'>
-</span><span class='line'>#如果用的是ZSH
-</span><span class='line'>$ rake "new_post[title]"
-</span><span class='line'>#或者
-</span><span class='line'>$ rake new_post\['title'\]</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="err">#</span><span class="n">如果用的是ZSH</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="s">&quot;new_post[title]&quot;</span>
+</span><span class='line'><span class="err">#</span><span class="n">或者</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">new_post</span><span class="err">\</span><span class="o">[</span><span class="err">&#39;</span><span class="n">title</span><span class="err">&#39;\</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>生成的文件在<code>~/source/_posts</code>目录下</p>
 
 <h3>编辑博文</h3>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -448,17 +450,18 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#...markdown写博文
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="o">...</span><span class="na">markdown写博文</span>
 </span><span class='line'>
-</span><span class='line'>$ rake preview #localhost:4000
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">preview</span> <span class="err">#</span><span class="nl">localhost:</span><span class="mi">4000</span>
 </span><span class='line'>
-</span><span class='line'>$ rake generate
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'>$ git add .
-</span><span class='line'>$ git commit -m "comment" 
-</span><span class='line'>$ git push origin source
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;comment&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'>$ rake deploy</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <hr />
