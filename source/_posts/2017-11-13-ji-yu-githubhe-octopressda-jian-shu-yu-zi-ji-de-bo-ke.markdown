@@ -33,7 +33,7 @@ $ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 
 有了Homebrew就可以安装rbenv了
 
-```
+```Javascript
 $ brew update
 $ brew install rbenv
 $ brew install ruby-build
@@ -44,7 +44,7 @@ $ brew install ruby-build
 
 安装完成后可以用ruby --version进行验证
 
-```
+```javascript
 $ rbenv install 1.9.3-p125
 $ rbenv local 1.9.3-p125
 $ rbenv rehash
@@ -76,7 +76,7 @@ $ ruby --version #ruby 1.9.3p551 (2014-11-13 revision 48407)
 ###安装Octopress
 安装Ruby完成后就按照官方指南安装Octpress
 
-```
+```shell
 #clone octopress
 $ git clone git://github.com/imathis/octopress.git octopress
 $ cd octopress
@@ -122,7 +122,7 @@ $ git push origin source
 ###修改配置
 配置文件路径为`~/octopress/_config.yml`
 
-```
+```json
 url:                # For rewriting urls for RSS, etc
 title:              # Used in the header and title tags
 subtitle:           # A description used in the header
@@ -232,7 +232,7 @@ $ rake new_post\['title'\]
 ###编辑博文
 
 ```
-#...markdown写博文
+#markdown写博文
 
 $ rake preview #localhost:4000
 
