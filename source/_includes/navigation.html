@@ -1,11 +1,11 @@
 <ul class="main-navigation">
 {% if page.title == nil %} <div class="selected"> {% else %} <div> {% endif %}
   <li><a href="{{ root_url }}/">主页 blog</a></li></div><div class="spacer"></div>
-    {% if page.title == '分类 categories'%} <div class="selected"> {% else %} <div> {% endif %}
+    {% if page.title == '分类 categories - { site.title }'%} <div class="selected"> {% else %} <div> {% endif %}
   <li><a href="{{ root_url }}/blog/categories">分类 categories</a></li></div><div class="spacer"></div>
-      {% if page.title == '归档 Archive'%} <div class="selected"> {% else %} <div> {% endif %}
+      {% if page.title == '归档 Archive - { site.title }'%} <div class="selected"> {% else %} <div> {% endif %}
   <li><a href="{{ root_url }}/blog/archives">归档 archive</a></li></div><div class="spacer"></div>
-        {% if page.title == '关于 About'%} <div class="selected"> {% else %} <div> {% endif %}
+        {% if page.title == '关于 About - { site.title }'%} <div class="selected"> {% else %} <div> {% endif %}
   <li><a href="{{ root_url }}/about">关于 about</a></li></div>
 </ul>
   {% comment %}
