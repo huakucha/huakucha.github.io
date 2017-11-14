@@ -37,11 +37,11 @@
 
 <script type="text/javascript">
     function addBlankTargetForLinks () {
-    $('a[href^="http"]').each(function(){
+    $('a[href^="https"]').each(function(){
            $(this).attr('target', '_blank');
        });
     }
-    
+
     $(document).bind('DOMNodeInserted', function(event) {
         addBlankTargetForLinks();
     });
@@ -90,6 +90,15 @@
 </ul>
   
 
+  <!--返回顶部开始
+<div id="full" border=1 style="width:50px; height:50px; position:fixed; right:80px; bottom:100px; z-index:100; text-align:center; background-color:rgb(114, 114, 114); cursor:pointer;">
+    <a href="#" onclick="goTop();return false;">
+            <i class="fa fa-angle-up fa-2x" aria-hidden="true" border=0 alt="返回顶部"></i>
+    </a>
+   </div>
+<script src="/javascripts/top.js" type="text/javascript"></script>
+-->
+   <!--返回顶部结束-->
 </div>
 </header>
   <div id="main">
