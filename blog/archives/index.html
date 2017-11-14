@@ -35,6 +35,18 @@ Nov 13 2017 posted in octopress Hi, I'm huakucha You can read more about me on m
 -->
 <link href="http://fonts.useso.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.useso.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+    function addBlankTargetForLinks () {
+    $('a[href^="http"]').each(function(){
+           $(this).attr('target', '_blank');
+       });
+    }
+    
+    $(document).bind('DOMNodeInserted', function(event) {
+        addBlankTargetForLinks();
+    });
+</script>
   
 
 </head>
