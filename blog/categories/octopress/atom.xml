@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | 一骑当千]]></title>
   <link href="https://huakucha.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="https://huakucha.github.io/"/>
-  <updated>2017-11-14T11:21:29+08:00</updated>
+  <updated>2017-11-14T11:44:05+08:00</updated>
   <id>https://huakucha.github.io/</id>
   <author>
     <name><![CDATA[花裤衩]]></name>
@@ -46,7 +46,7 @@
 
 <p>有了Homebrew就可以安装rbenv了</p>
 
-<pre><code class="java">$ brew update
+<pre><code class="Javascript">$ brew update
 $ brew install rbenv
 $ brew install ruby-build
 </code></pre>
@@ -57,7 +57,7 @@ $ brew install ruby-build
 
 <p>安装完成后可以用ruby &ndash;version进行验证</p>
 
-<pre><code>$ rbenv install 1.9.3-p125
+<pre><code class="javascript">$ rbenv install 1.9.3-p125
 $ rbenv local 1.9.3-p125
 $ rbenv rehash
 $ ruby --version #ruby 1.9.3p125 (2012-02-16 revision 34643)
@@ -86,7 +86,7 @@ $ ruby --version #ruby 1.9.3p551 (2014-11-13 revision 48407)
 
 <p>安装Ruby完成后就按照官方指南安装Octpress</p>
 
-<pre><code>#clone octopress
+<pre><code class="shell">#clone octopress
 $ git clone git://github.com/imathis/octopress.git octopress
 $ cd octopress
 
@@ -133,7 +133,7 @@ $ git push origin source
 
 <p>配置文件路径为<code>~/octopress/_config.yml</code></p>
 
-<pre><code>url:                # For rewriting urls for RSS, etc
+<pre><code class="json">url:                # For rewriting urls for RSS, etc
 title:              # Used in the header and title tags
 subtitle:           # A description used in the header
 author:             # Your name, for RSS, Copyright, Metadata
@@ -185,9 +185,9 @@ $ rake deploy
 
 <p>这个aboutme对应的html为<code>/source/_includes/custom/navigation.html</code></p>
 
-<pre><code class="">&lt;li&gt;&lt;a href="/"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+<pre><code class="">&lt;li&gt;&lt;a href="{{ root_url }}/"&gt;Blog&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="http://about.me/shashankmehta"&gt;About&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/blog/archives"&gt;Archives&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="{{ root_url }}/blog/archives"&gt;Archives&lt;/a&gt;&lt;/li&gt;
 </code></pre>
 
 <p>把其中的<code>http://about.me/shashankmehta</code>替换成需要的url，替换完之后</p>
@@ -240,7 +240,7 @@ $ rake new_post\['title'\]
 
 <h3>编辑博文</h3>
 
-<pre><code>#...markdown写博文
+<pre><code>#markdown写博文
 
 $ rake preview #localhost:4000
 
