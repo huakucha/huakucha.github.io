@@ -8,7 +8,7 @@ description: "我的第一篇Octopress博客"
 categories: Octopress
 ---
 #前言
-首先感谢[程哥](http://msching.github.io/)的支持，我大致也是看到他的博客才萌生搭Blog的想法，再则希望通过技术博客的书写能理清技术的始末，为每个课题形成一个技术闭环，刚毕业技术积累不是很成熟，不部分时间都是在利用为知笔记、有道笔记的工具来记录工作中所积累的知识，对此我也进行了一些尝试，但最终因为国内的一些博客站点糟糕的排版、设计、代码高亮等等各种原因而放弃了。本着开源分享的心态我想把几年的心得与技术积累已文字的形式展示出来，经过一番Google之后我发现现在的程序猿们都偏向于[Octopress](http://octopress.org/)这个开源的框架加上[Github Pages](https://pages.github.com/)服务来搭建Blog，看上非常的高大上，排版、代码高亮都做得非常棒，以[Markdown](http://zh.wikipedia.org/zh/Markdown)，主要是[Mou](http://25.io/mou/)作者不再更新软件了
+首先感谢[程哥](http://msching.github.io/)的支持，我大致也是看到他的博客才萌生搭Blog的想法，再则希望通过技术博客的书写能理清技术的始末，为每个课题形成一个技术闭环，刚毕业技术积累不是很成熟，不部分时间都是在利用为知笔记、有道笔记的工具来记录工作中所积累的知识，对此我也进行了一些尝试，但最终因为国内的一些博客站点糟糕的排版、设计、代码高亮等等各种原因而放弃了。本着开源分享的心态我想把几年的心得与技术积累已文字的形式展示出来，经过一番Google之后我发现现在的程序猿们都偏向于[Octopress](http://octopress.org/)这个开源的框架加上[Github Pages](https://pages.github.com/)服务来搭建Blog，看上非常的高大上，排版、代码高亮都做得非常棒，本人主要使用[Markdown](http://zh.wikipedia.org/zh/Markdown)做博客编辑，主要是[Mou](http://25.io/mou/)作者不再更新软件了，作者就使用[MacDown](http://macdown.uranusjr.com/)进行编辑，其实最近超级火的编辑器[Visual Studio Code](https://code.visualstudio.com/)安装Markdown插件也是可以预览的
 
 <!--more-->
 
