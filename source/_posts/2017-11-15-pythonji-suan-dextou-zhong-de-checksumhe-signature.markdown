@@ -10,6 +10,8 @@ categories: [Android]
 #前言
 本文主要编写修改Android程序DEX头中checksum、signature 和file_size头信息的Python脚本，修改checksum、signature的场景一般出现在加壳以及逆向之后重签名之后对文件完整性进行修改
 
+<!--more-->
+
 我们先看一下文件头记录了dex文件的一些基本信息 : 
 
 ```python
