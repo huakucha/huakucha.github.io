@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | 一骑当千]]></title>
   <link href="https://huakucha.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="https://huakucha.github.io/"/>
-  <updated>2017-11-14T15:50:35+08:00</updated>
+  <updated>2017-11-15T11:31:15+08:00</updated>
   <id>https://huakucha.github.io/</id>
   <author>
     <name><![CDATA[花裤衩]]></name>
@@ -20,28 +20,26 @@
     <id>https://huakucha.github.io/blog/2017/11/13/ji-yu-githubhe-octopressda-jian-shu-yu-zi-ji-de-bo-ke</id>
     <content type="html"><![CDATA[<h1>前言</h1>
 
-<p>从小我就相信“好记性不如烂笔头”这句谚语，所以搭Blog想法在我的脑海中已经酝酿了很久。刚工作那会就想利用Blog来记录工作中所积累的知识，对此我也进行了一些尝试，但最终因为国内的一些博客站点糟糕的排版、设计、代码高亮等等各种原因而放弃了。之后的一段时间由于工作忙碌、其他各种事情以及犯懒的缘故一直没有把这件事情落实下来。最近在项目进行的过程中发现自己对之前碰到过的一些技术问题的记忆逐渐变得模糊起来，于是才把搭建Blog这件事情重新提上了日程。经过一番Google之后我发现现在的程序猿们都偏向于<a href="http://octopress.org/">Octopress</a>这个开源的框架加上<a href="https://pages.github.com/">Github Pages</a>服务来搭建Blog，看上非常的高大上，排版、代码高亮都做得非常棒，以<a href="http://zh.wikipedia.org/zh/Markdown">Markdown</a>写Blog的方式也非常符合我的日常工作习惯，于是决定立马付诸行动。</p>
+<p>首先感谢<a href="http://msching.github.io/">程哥</a>的支持，我大致也是看到他的博客才萌生搭Blog的想法，再则希望通过技术博客的书写能理清技术的始末，为每个课题形成一个技术闭环，刚毕业技术积累不是很成熟，不部分时间都是在利用为知笔记、有道笔记的工具来记录工作中所积累的知识，对此我也进行了一些尝试，但最终因为国内的一些博客站点糟糕的排版、设计、代码高亮等等各种原因而放弃了。本着开源分享的心态我想把几年的心得与技术积累已文字的形式展示出来，经过一番Google之后我发现现在的程序猿们都偏向于<a href="http://octopress.org/">Octopress</a>这个开源的框架加上<a href="https://pages.github.com/">Github Pages</a>服务来搭建Blog，看上非常的高大上，排版、代码高亮都做得非常棒，以<a href="http://zh.wikipedia.org/zh/Markdown">Markdown</a>，主要是<a href="http://25.io/mou/">Mou</a>作者不再更新软件了</p>
 
 <!--more-->
 
 
-<hr />
-
 <h1>安装Octopress</h1>
 
-<p><a href="http://octopress.org/docs/setup/">这里</a>是Octopress的官方指南，各位可以按照其中的步骤进行安装，下面的文字只是记录了我个人的安装过程，可以为大家提供一些参考。</p>
+<p><a href="http://octopress.org/docs/setup/">这里</a>是Octopress的官方指南，各位可以按照其中的步骤进行安装，下面的文字只是记录了我个人的安装过程，可以为大家提供一些参考</p>
 
-<p>由于Octopress的使用需要Ruby，于是搭环境就这条路上的第一只拦路虎。Ruby版本繁多并且版本之间向下兼容做的不好，所以基于Ruby所做的框架大多要求特定版本的Ruby才能正常运行。</p>
+<p>由于Octopress的使用需要Ruby，于是搭环境就这条路上的第一只拦路虎。Ruby版本繁多并且版本之间向下兼容做的不好，所以基于Ruby所做的框架大多要求特定版本的Ruby才能正常运行</p>
 
-<p>Octopress要求的是Ruby1.9.3，MacOSX自带的Ruby版本是2.x的，所以需要利用一些工具来安装低版本的Ruby。Octopress的官方指南推荐使用的是RVM和rbenv，可以根据需要选择使用需要的工具。</p>
+<p>Octopress最低要求的是Ruby1.9.3（最低，已经不需要去强制去下载1.9.3），MacOSX自带的Ruby版本是2.x的，其实用现阶段的Ruby就ok了。Octopress的官方指南推荐使用的是RVM和rbenv，可以根据需要选择使用需要的工具</p>
 
 <h3>安装rbenv</h3>
 
-<p>在第一次安装octopress（OSX 10.10时代）的过程中我首先使用了RVM，但碰到了一些莫名的问题无法解决，最后还是使用了rbenv。</p>
+<p>我最近才第一次安装octopress（我的是OSX 10.12.5）的过程中我首先使用了RVM，但碰到了一些莫名的问题无法解决，最后还是使用了rbenv</p>
 
-<p>这里我使用<a href="http://brew.sh/">Homebrew</a>来安装rbenv，如果你没有Homebrew，打开终端，使用以下命令安装吧。</p>
+<p>这里我使用<a href="http://brew.sh/">Homebrew</a>来安装rbenv，如果你没有Homebrew，打开终端，使用以下命令安装吧</p>
 
-<pre><code>$ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+<pre><code class="Javascript">$ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 </code></pre>
 
 <p>有了Homebrew就可以安装rbenv了</p>
@@ -53,19 +51,20 @@ $ brew install ruby-build
 
 <h3>用rbenv安装Ruby</h3>
 
-<p>使用rbenv安装1.9.3版本的ruby，一开始我安装的是1.9.3-p0的版本，但出现了一些错误，在搜素如何解决的过程中发现<a href="http://www.cnblogs.com/peterpan507/p/3538057.html">@Peter潘</a>在blog中写到可以尝试用1.9.3-p125，经过尝试成功的安装上了Ruby1.9.3-p125</p>
+<p>如果想尝试安装与管理其他版本的Ruby，可是使用如下的方式进行管理与切换：</p>
 
-<p>安装完成后可以用ruby &ndash;version进行验证</p>
-
-<pre><code class="javascript">$ rbenv install 1.9.3-p125
-$ rbenv local 1.9.3-p125
+<pre><code class="javascript">$ rbenv install --list     # 列出所有 ruby 版本
+$ rbenv install 2.0.0-p247 # 安装需要的ruby版本
+$ rbenv versions           # 所有已安装的ruby版本
+$ rbenv global 1.8.7-p352  # 设置全局ruby版本
+$ rbenv local 1.9.7        # 设置当前文件夹ruby版本
 $ rbenv rehash
-$ ruby --version #ruby 1.9.3p125 (2012-02-16 revision 34643)
+$ rbenv uninstall 2.00     #卸载指定ruby版本
 </code></pre>
 
 <h3>安装RVM</h3>
 
-<p>在第二次安装octopress（OSX 10.11时代）的过程中依照之前的经验使用rbenv，但却怎么也安不上需要的ruby版本，最后换回了RVM。。</p>
+<p>在第二次安装octopress（OSX 10.11时代）的过程中依照之前的经验使用rbenv，但却怎么也安不上需要的ruby版本，最后换回了RVM</p>
 
 <p>安装octopress官方提供的安装方法</p>
 
@@ -74,7 +73,7 @@ $ ruby --version #ruby 1.9.3p125 (2012-02-16 revision 34643)
 
 <h3>用RVM安装Ruby</h3>
 
-<p>使用rvm安装1.9.3版本的ruby，我依照之前的经验安装1.9.3-p125的版本，但在编译时出现了一些错误，继而尝试了评论中<a href="">@lance_lan</a>提到得1.9.3-p551版本才安装成功。</p>
+<p>同上如果使用rvm安装ruby，我依照之前的经验安装1.9.3-p125的版本，但在编译时出现了一些错误，继而尝试了评论中<a href="">@lance_lan</a>提到得1.9.3-p551版本才安装成功</p>
 
 <pre><code>$ rvm install ruby-1.9.3-p551 --with-gcc=clang
 $ rvm use 1.9.3-p551
@@ -99,24 +98,20 @@ $ bundle install
 $ rake install
 </code></pre>
 
-<hr />
-
 <h1>部署</h1>
 
-<p>接下来需要把Blog部署到github上去，第一步要做的是去<a href="https://github.com/new">github</a>创建一个<code>username.github.io</code>的repo，比如我的就叫<code>msching.github.io</code>。</p>
+<p>接下来需要把Blog部署到github上去，第一步要做的是去<a href="https://github.com/new">github</a>创建一个<code>username.github.io</code>的repo，比如我的就叫<code>huakucha.github.io</code></p>
 
-<p>然后运行以下命令，并依照提示完成github和Octopress的关联</p>
+<p>然后运行以下命令，并依照提示完成github和Octopress的关联，关联的是你工程的全路径</p>
 
-<pre><code>$ rake setup_github_pages
+<pre><code class="java">$ rake setup_github_pages
 </code></pre>
-
-<hr />
 
 <h1>创建博客</h1>
 
 <h3>生成博客</h3>
 
-<pre><code>$ rake generate
+<pre><code class="java">$ rake generate
 $ rake deploy
 </code></pre>
 
@@ -131,9 +126,9 @@ $ git push origin source
 
 <h3>修改配置</h3>
 
-<p>配置文件路径为<code>~/octopress/_config.yml</code></p>
+<p>配置文件路径为<code>~/octopress/_config.yml</code>，这个文件其实就是octopress的配置文件，里面内置了一些现有的模块，你也可以新增全局的配置属性</p>
 
-<pre><code class="json">url:                # For rewriting urls for RSS, etc
+<pre><code class="java">url:                # For rewriting urls for RSS, etc
 title:              # Used in the header and title tags
 subtitle:           # A description used in the header
 author:             # Your name, for RSS, Copyright, Metadata
@@ -159,15 +154,11 @@ $ rake deploy
 
 <h3>安装第三方主题</h3>
 
-<p>Octopress有许多第三方主题可以选择，首先在<a href="http://opthemes.com/">这里</a>上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程</p>
+<p>Octopress有许多第三方主题可以选择，首先在<a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">这里Github</a>上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程，我使用的是<code>classic-martinb</code></p>
 
-<pre><code>#这里以安装allenhsu定制的greyshade主题为例，原作者是shashankmehta
-$ git clone git@github.com:allenhsu/greyshade.git .themes/greyshade
-
-#Substitue 'color' with your highlight color
-$ echo "\$greyshade: color;" &gt;&gt; sass/custom/_colors.scss 
-
-$ rake "install[greyshade]"
+<pre><code>$ cd octopress
+$ git submodule add git://github.com/martinbjeldbak/classic-martinb.git .themes/classic-martinb
+$ rake install['classic-martinb']
 $ rake generate
 
 $ git add .
@@ -240,7 +231,7 @@ $ rake new_post\['title'\]
 
 <h3>编辑博文</h3>
 
-<pre><code>#markdown写博文
+<pre><code class="java">#markdown写博文
 
 $ rake preview #localhost:4000
 
@@ -253,17 +244,110 @@ $ git push origin source
 $ rake deploy
 </code></pre>
 
-<hr />
+<h1>后记：解决Octopress博客访问慢的问题</h1>
+
+<p>由于国内环境的原因造成了访问博客速度“惊人”，所以对Octopress进行相关改造成了必须的步骤（如果你能接受手机端打开时间超过20秒），好了废话不多讲</p>
+
+<h2>清理没用的服务</h2>
+
+<p>修改<code>_config.yml</code>，由于<code>Octopress</code>预设了一些像<code>Disqus</code>评论、<code>Github</code>仓库、<code>Twitter</code>等访问较慢的一些网站，这个相关服务在国内访问相对较慢，这里你只要把这些不需要的服务注释掉就好了</p>
+
+<h3>去除Disqus评论</h3>
+
+<pre><code class="java">1 #Disqus Comments
+2 #disqus_short_name: androidyue
+3 #disqus_show_comment_count: true
+</code></pre>
+
+<h3>去掉Github仓库展示</h3>
+
+<pre><code class="java">#Github repositories
+#github_user: androidyue
+#github_repo_count: 11
+#github_show_profile_link: true
+#github_skip_forks: true
+</code></pre>
+
+<h3>Twitter按钮</h3>
+
+<pre><code class="java">#Twitter
+#twitter_user:
+#twitter_tweet_button: true
+</code></pre>
+
+<h3>Facebook Like</h3>
+
+<pre><code class="java">#Facebook Like
+#facebook_like: true
+</code></pre>
+
+<h3>去除Google+相关</h3>
+
+<pre><code class="java">#Google +1
+#google_plus_one: true
+#google_plus_one_size: medium
+
+#Google Plus Profile
+#Hidden: No visible button, just add author information to search results
+#googleplus_user:
+#googleplus_hidden: false
+</code></pre>
+
+<h2>替换快速的请求资源</h2>
+
+<p>其实，真正解决加速的重要环节可能是这里，因为Octopress很多依赖于Google的库和资源</p>
+
+<h3>解决Google Analytics巨慢的问题</h3>
+
+<p><a href="http://droidyue.com/">这里</a>给出的方案是自己在七牛上存放<code>ga.js</code>(主要是<code>Google Analytics</code>的相关方法)，但是我这边遇到了HTTPS访问HTTP的问题我就直接在自己的工程目录下存放了<code>ga.js</code>，参考如下，修改<code>source/_includes/google_analytics.html</code></p>
+
+<pre><code class="javascript">$ &lt;script&gt;
+$   ...
+$   _gaq.push(['_trackPageview']);
+$
+$   (function() {
+$       var ga = document.createElement('script'); 
+$       ga.type = 'text/javascript'; 
+$       ga.async = true;
+$       ga.src='http://xxxx.com/ga.js';//自己工程目录或者CDN
+$       var s = document.getElementsByTagName('script')[0];     
+$       s.parentNode.insertBefore(ga, s);
+$   })();
+$ &lt;/script&gt;
+</code></pre>
+
+<h3>解决fonts.googleapis.com</h3>
+
+<p>问了节省大家时间，我给你们找了一个<a href="http://blog.csdn.net/maxsky/article/details/51980438">国内外优秀前端 CDN 加速服务</a>，去找一些你们自己认为信得过的CDN服务商(例如：不要选360了因为已经不再维护了)</p>
+
+<p>修改文件<code>/source/_includes/custom/head.html</code></p>
+
+<pre><code class="javascript">$ &lt;link href="https://fonts.cat.net/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"&gt;
+$ &lt;link href="https://fonts.cat.net/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"&gt;
+</code></pre>
+
+<h3>解决ajax.googleapis.com</h3>
+
+<p>修改<code>source/_includes/head.html</code>，还是利用上面的CDN替换<code>jquery.min.js</code></p>
+
+<pre><code class="javascript">$ &lt;link rel="canonical" href=""&gt;
+$ &lt;link href="/favicon.png" rel="icon"&gt;
+$ &lt;link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css"&gt;
+$ &lt;link href="/atom.xml" rel="alternate" title="一骑当千" type="application/atom+xml"&gt;
+$ &lt;script src="/javascripts/modernizr-2.0.js"&gt;&lt;/script&gt;
+$ &lt;script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"&gt;&lt;/script&gt;
+$ &lt;script&gt;!window.jQuery &amp;&amp; document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))&lt;/script&gt;
+$ &lt;script src="/javascripts/octopress.js" type="text/javascript"&gt;&lt;/script&gt;
+</code></pre>
 
 <h1>参考资料</h1>
 
 <ul>
 <li><a href="http://octopress.org/">http://octopress.org/</a></li>
-<li><a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/">http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/</a></li>
-<li><a href="http://www.cnblogs.com/peterpan507/p/3538057.html">http://www.cnblogs.com/peterpan507/p/3538057.html</a></li>
+<li><a href="http://msching.github.io/">http://msching.github.io/</a></li>
 <li><a href="http://biaobiaoqi.me/blog/2013/03/21/building-octopress-in-github-mac/">http://biaobiaoqi.me/blog/2013/03/21/building-octopress-in-github-mac/</a></li>
 <li><a href="http://biaobiaoqi.me/blog/2013/07/10/decorate-octopress/">http://biaobiaoqi.me/blog/2013/07/10/decorate-octopress/</a></li>
-<li><a href="http://yanping.me/cn/blog/2012/01/07/theming-and-customization/">http://yanping.me/cn/blog/2012/01/07/theming-and-customization/</a></li>
+<li><a href="http://droidyue.com/blog/2014/06/22/fix-octopress-slow-loading-speed-issue-in-china-mainland/index.html">http://droidyue.com/blog/2014/06/22/fix-octopress-slow-loading-speed-issue-in-china-mainland/index.html</a></li>
 </ul>
 
 ]]></content>

@@ -136,29 +136,28 @@
 
 <div class="entry-content"><h1>前言</h1>
 
-<p>从小我就相信“好记性不如烂笔头”这句谚语，所以搭Blog想法在我的脑海中已经酝酿了很久。刚工作那会就想利用Blog来记录工作中所积累的知识，对此我也进行了一些尝试，但最终因为国内的一些博客站点糟糕的排版、设计、代码高亮等等各种原因而放弃了。之后的一段时间由于工作忙碌、其他各种事情以及犯懒的缘故一直没有把这件事情落实下来。最近在项目进行的过程中发现自己对之前碰到过的一些技术问题的记忆逐渐变得模糊起来，于是才把搭建Blog这件事情重新提上了日程。经过一番Google之后我发现现在的程序猿们都偏向于<a href="http://octopress.org/">Octopress</a>这个开源的框架加上<a href="https://pages.github.com/">Github Pages</a>服务来搭建Blog，看上非常的高大上，排版、代码高亮都做得非常棒，以<a href="http://zh.wikipedia.org/zh/Markdown">Markdown</a>写Blog的方式也非常符合我的日常工作习惯，于是决定立马付诸行动。</p>
+<p>首先感谢<a href="http://msching.github.io/">程哥</a>的支持，我大致也是看到他的博客才萌生搭Blog的想法，再则希望通过技术博客的书写能理清技术的始末，为每个课题形成一个技术闭环，刚毕业技术积累不是很成熟，不部分时间都是在利用为知笔记、有道笔记的工具来记录工作中所积累的知识，对此我也进行了一些尝试，但最终因为国内的一些博客站点糟糕的排版、设计、代码高亮等等各种原因而放弃了。本着开源分享的心态我想把几年的心得与技术积累已文字的形式展示出来，经过一番Google之后我发现现在的程序猿们都偏向于<a href="http://octopress.org/">Octopress</a>这个开源的框架加上<a href="https://pages.github.com/">Github Pages</a>服务来搭建Blog，看上非常的高大上，排版、代码高亮都做得非常棒，以<a href="http://zh.wikipedia.org/zh/Markdown">Markdown</a>，主要是<a href="http://25.io/mou/">Mou</a>作者不再更新软件了</p>
 
 <!--more-->
 
 
-<hr />
-
 <h1>安装Octopress</h1>
 
-<p><a href="http://octopress.org/docs/setup/">这里</a>是Octopress的官方指南，各位可以按照其中的步骤进行安装，下面的文字只是记录了我个人的安装过程，可以为大家提供一些参考。</p>
+<p><a href="http://octopress.org/docs/setup/">这里</a>是Octopress的官方指南，各位可以按照其中的步骤进行安装，下面的文字只是记录了我个人的安装过程，可以为大家提供一些参考</p>
 
-<p>由于Octopress的使用需要Ruby，于是搭环境就这条路上的第一只拦路虎。Ruby版本繁多并且版本之间向下兼容做的不好，所以基于Ruby所做的框架大多要求特定版本的Ruby才能正常运行。</p>
+<p>由于Octopress的使用需要Ruby，于是搭环境就这条路上的第一只拦路虎。Ruby版本繁多并且版本之间向下兼容做的不好，所以基于Ruby所做的框架大多要求特定版本的Ruby才能正常运行</p>
 
-<p>Octopress要求的是Ruby1.9.3，MacOSX自带的Ruby版本是2.x的，所以需要利用一些工具来安装低版本的Ruby。Octopress的官方指南推荐使用的是RVM和rbenv，可以根据需要选择使用需要的工具。</p>
+<p>Octopress最低要求的是Ruby1.9.3（最低，已经不需要去强制去下载1.9.3），MacOSX自带的Ruby版本是2.x的，其实用现阶段的Ruby就ok了。Octopress的官方指南推荐使用的是RVM和rbenv，可以根据需要选择使用需要的工具</p>
 
 <h3>安装rbenv</h3>
 
-<p>在第一次安装octopress（OSX 10.10时代）的过程中我首先使用了RVM，但碰到了一些莫名的问题无法解决，最后还是使用了rbenv。</p>
+<p>我最近才第一次安装octopress（我的是OSX 10.12.5）的过程中我首先使用了RVM，但碰到了一些莫名的问题无法解决，最后还是使用了rbenv</p>
 
-<p>这里我使用<a href="http://brew.sh/">Homebrew</a>来安装rbenv，如果你没有Homebrew，打开终端，使用以下命令安装吧。</p>
+<p>这里我使用<a href="http://brew.sh/">Homebrew</a>来安装rbenv，如果你没有Homebrew，打开终端，使用以下命令安装吧</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="nx">$</span> <span class="nx">ruby</span> <span class="o">-</span><span class="nx">e</span> <span class="s2">&quot;$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>有了Homebrew就可以安装rbenv了</p>
@@ -174,24 +173,28 @@
 
 <h3>用rbenv安装Ruby</h3>
 
-<p>使用rbenv安装1.9.3版本的ruby，一开始我安装的是1.9.3-p0的版本，但出现了一些错误，在搜素如何解决的过程中发现<a href="http://www.cnblogs.com/peterpan507/p/3538057.html">@Peter潘</a>在blog中写到可以尝试用1.9.3-p125，经过尝试成功的安装上了Ruby1.9.3-p125</p>
-
-<p>安装完成后可以用ruby &ndash;version进行验证</p>
+<p>如果想尝试安装与管理其他版本的Ruby，可是使用如下的方式进行管理与切换：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">install</span> <span class="mf">1.9</span><span class="p">.</span><span class="mi">3</span><span class="o">-</span><span class="nx">p125</span>
-</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">local</span> <span class="mf">1.9</span><span class="p">.</span><span class="mi">3</span><span class="o">-</span><span class="nx">p125</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">install</span> <span class="o">--</span><span class="nx">list</span>     <span class="err">#</span> <span class="err">列出所有</span> <span class="nx">ruby</span> <span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">install</span> <span class="mf">2.0</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="nx">p247</span> <span class="err">#</span> <span class="err">安装需要的</span><span class="nx">ruby</span><span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">versions</span>           <span class="err">#</span> <span class="err">所有已安装的</span><span class="nx">ruby</span><span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">global</span> <span class="mf">1.8</span><span class="p">.</span><span class="mi">7</span><span class="o">-</span><span class="nx">p352</span>  <span class="err">#</span> <span class="err">设置全局</span><span class="nx">ruby</span><span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">local</span> <span class="mf">1.9</span><span class="p">.</span><span class="mi">7</span>        <span class="err">#</span> <span class="err">设置当前文件夹</span><span class="nx">ruby</span><span class="err">版本</span>
 </span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">rehash</span>
-</span><span class='line'><span class="nx">$</span> <span class="nx">ruby</span> <span class="o">--</span><span class="nx">version</span> <span class="err">#</span><span class="nx">ruby</span> <span class="mf">1.9</span><span class="p">.</span><span class="mi">3</span><span class="nx">p125</span> <span class="p">(</span><span class="mi">2012</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">16</span> <span class="nx">revision</span> <span class="mi">34643</span><span class="p">)</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">uninstall</span> <span class="mf">2.00</span>     <span class="err">#卸载指定</span><span class="nx">ruby</span><span class="err">版本</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 <h3>安装RVM</h3>
 
-<p>在第二次安装octopress（OSX 10.11时代）的过程中依照之前的经验使用rbenv，但却怎么也安不上需要的ruby版本，最后换回了RVM。。</p>
+<p>在第二次安装octopress（OSX 10.11时代）的过程中依照之前的经验使用rbenv，但却怎么也安不上需要的ruby版本，最后换回了RVM</p>
 
 <p>安装octopress官方提供的安装方法</p>
 
@@ -202,7 +205,7 @@
 
 <h3>用RVM安装Ruby</h3>
 
-<p>使用rvm安装1.9.3版本的ruby，我依照之前的经验安装1.9.3-p125的版本，但在编译时出现了一些错误，继而尝试了评论中<a href="">@lance_lan</a>提到得1.9.3-p551版本才安装成功。</p>
+<p>同上如果使用rvm安装ruby，我依照之前的经验安装1.9.3-p125的版本，但在编译时出现了一些错误，继而尝试了评论中<a href="">@lance_lan</a>提到得1.9.3-p551版本才安装成功</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -244,20 +247,16 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<hr />
-
 <h1>部署</h1>
 
-<p>接下来需要把Blog部署到github上去，第一步要做的是去<a href="https://github.com/new">github</a>创建一个<code>username.github.io</code>的repo，比如我的就叫<code>msching.github.io</code>。</p>
+<p>接下来需要把Blog部署到github上去，第一步要做的是去<a href="https://github.com/new">github</a>创建一个<code>username.github.io</code>的repo，比如我的就叫<code>huakucha.github.io</code></p>
 
-<p>然后运行以下命令，并依照提示完成github和Octopress的关联</p>
+<p>然后运行以下命令，并依照提示完成github和Octopress的关联，关联的是你工程的全路径</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">setup_github_pages</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-<hr />
 
 <h1>创建博客</h1>
 
@@ -285,7 +284,7 @@
 
 <h3>修改配置</h3>
 
-<p>配置文件路径为<code>~/octopress/_config.yml</code></p>
+<p>配置文件路径为<code>~/octopress/_config.yml</code>，这个文件其实就是octopress的配置文件，里面内置了一些现有的模块，你也可以新增全局的配置属性</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -298,17 +297,17 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">url:</span>                <span class="err">#</span> <span class="err">For</span> <span class="err">rewriting</span> <span class="err">urls</span> <span class="err">for</span> <span class="err">RSS,</span> <span class="err">etc</span>
-</span><span class='line'><span class="err">title:</span>              <span class="err">#</span> <span class="err">Used</span> <span class="err">in</span> <span class="err">the</span> <span class="err">header</span> <span class="err">and</span> <span class="err">title</span> <span class="err">tags</span>
-</span><span class='line'><span class="err">subtitle:</span>           <span class="err">#</span> <span class="err">A</span> <span class="err">description</span> <span class="err">used</span> <span class="err">in</span> <span class="err">the</span> <span class="err">header</span>
-</span><span class='line'><span class="err">author:</span>             <span class="err">#</span> <span class="err">Your</span> <span class="err">name,</span> <span class="err">for</span> <span class="err">RSS,</span> <span class="err">Copyright,</span> <span class="err">Metadata</span>
-</span><span class='line'><span class="err">simple_search:</span>      <span class="err">#</span> <span class="err">Search</span> <span class="err">engine</span> <span class="err">for</span> <span class="err">simple</span> <span class="err">site</span> <span class="err">search</span>
-</span><span class='line'><span class="err">description:</span>        <span class="err">#</span> <span class="err">A</span> <span class="err">default</span> <span class="err">meta</span> <span class="err">description</span> <span class="err">for</span> <span class="err">your</span> <span class="err">site</span>
-</span><span class='line'><span class="err">date_format:</span>        <span class="err">#</span> <span class="err">Format</span> <span class="err">dates</span> <span class="err">using</span> <span class="err">Ruby&#39;s</span> <span class="err">date</span> <span class="err">strftime</span> <span class="err">syntax</span>
-</span><span class='line'><span class="err">subscribe_rss:</span>      <span class="err">#</span> <span class="err">Url</span> <span class="err">for</span> <span class="err">your</span> <span class="err">blog&#39;s</span> <span class="err">feed,</span> <span class="err">defauts</span> <span class="err">to</span> <span class="err">/atom.xml</span>
-</span><span class='line'><span class="err">subscribe_email:</span>    <span class="err">#</span> <span class="err">Url</span> <span class="err">to</span> <span class="err">subscribe</span> <span class="err">by</span> <span class="err">email</span> <span class="err">(service</span> <span class="err">required)</span>
-</span><span class='line'><span class="err">category_feeds:</span>     <span class="err">#</span> <span class="err">Enable</span> <span class="err">per</span> <span class="err">category</span> <span class="err">RSS</span> <span class="err">feeds</span> <span class="err">(defaults</span> <span class="err">to</span> <span class="kc">false</span> <span class="err">in</span> <span class="mf">2.1</span><span class="err">)</span>
-</span><span class='line'><span class="err">email:</span>              <span class="err">#</span> <span class="err">Email</span> <span class="err">address</span> <span class="err">for</span> <span class="err">the</span> <span class="err">RSS</span> <span class="err">feed</span> <span class="err">if</span> <span class="err">you</span> <span class="err">want</span> <span class="err">it.</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nl">url:</span>                <span class="err">#</span> <span class="n">For</span> <span class="n">rewriting</span> <span class="n">urls</span> <span class="k">for</span> <span class="n">RSS</span><span class="o">,</span> <span class="n">etc</span>
+</span><span class='line'><span class="nl">title:</span>              <span class="err">#</span> <span class="n">Used</span> <span class="n">in</span> <span class="n">the</span> <span class="n">header</span> <span class="n">and</span> <span class="n">title</span> <span class="n">tags</span>
+</span><span class='line'><span class="nl">subtitle:</span>           <span class="err">#</span> <span class="n">A</span> <span class="n">description</span> <span class="n">used</span> <span class="n">in</span> <span class="n">the</span> <span class="n">header</span>
+</span><span class='line'><span class="nl">author:</span>             <span class="err">#</span> <span class="n">Your</span> <span class="n">name</span><span class="o">,</span> <span class="k">for</span> <span class="n">RSS</span><span class="o">,</span> <span class="n">Copyright</span><span class="o">,</span> <span class="n">Metadata</span>
+</span><span class='line'><span class="nl">simple_search:</span>      <span class="err">#</span> <span class="n">Search</span> <span class="n">engine</span> <span class="k">for</span> <span class="n">simple</span> <span class="n">site</span> <span class="n">search</span>
+</span><span class='line'><span class="nl">description:</span>        <span class="err">#</span> <span class="n">A</span> <span class="k">default</span> <span class="n">meta</span> <span class="n">description</span> <span class="k">for</span> <span class="n">your</span> <span class="n">site</span>
+</span><span class='line'><span class="nl">date_format:</span>        <span class="err">#</span> <span class="n">Format</span> <span class="n">dates</span> <span class="n">using</span> <span class="n">Ruby</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">date</span> <span class="n">strftime</span> <span class="n">syntax</span>
+</span><span class='line'><span class="nl">subscribe_rss:</span>      <span class="err">#</span> <span class="n">Url</span> <span class="k">for</span> <span class="n">your</span> <span class="n">blog</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">feed</span><span class="o">,</span> <span class="n">defauts</span> <span class="n">to</span> <span class="o">/</span><span class="n">atom</span><span class="o">.</span><span class="na">xml</span>
+</span><span class='line'><span class="nl">subscribe_email:</span>    <span class="err">#</span> <span class="n">Url</span> <span class="n">to</span> <span class="n">subscribe</span> <span class="n">by</span> <span class="nf">email</span> <span class="o">(</span><span class="n">service</span> <span class="n">required</span><span class="o">)</span>
+</span><span class='line'><span class="nl">category_feeds:</span>     <span class="err">#</span> <span class="n">Enable</span> <span class="n">per</span> <span class="n">category</span> <span class="n">RSS</span> <span class="nf">feeds</span> <span class="o">(</span><span class="n">defaults</span> <span class="n">to</span> <span class="kc">false</span> <span class="n">in</span> <span class="mf">2.1</span><span class="o">)</span>
+</span><span class='line'><span class="nl">email:</span>              <span class="err">#</span> <span class="n">Email</span> <span class="n">address</span> <span class="k">for</span> <span class="n">the</span> <span class="n">RSS</span> <span class="n">feed</span> <span class="k">if</span> <span class="n">you</span> <span class="n">want</span> <span class="n">it</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -321,19 +320,19 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">generate</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">add</span> <span class="err">.</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">commit</span> <span class="err">-m</span> <span class="s2">&quot;settings&quot;</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">push</span> <span class="err">origin</span> <span class="err">source</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;settings&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">deploy</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 <h3>安装第三方主题</h3>
 
-<p>Octopress有许多第三方主题可以选择，首先在<a href="http://opthemes.com/">这里</a>上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程</p>
+<p>Octopress有许多第三方主题可以选择，首先在<a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">这里Github</a>上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程，我使用的是<code>classic-martinb</code></p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -345,24 +344,16 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">#这里以安装allenhsu定制的greyshade主题为例，原作者是shashankmehta</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">clone</span> <span class="err">git@github.com:allenhsu/greyshade.git</span> <span class="err">.themes/greyshade</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">cd</span> <span class="n">octopress</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">submodule</span> <span class="n">add</span> <span class="nl">git:</span><span class="c1">//github.com/martinbjeldbak/classic-martinb.git .themes/classic-martinb</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">install</span><span class="o">[</span><span class="err">&#39;</span><span class="n">classic</span><span class="o">-</span><span class="n">martinb</span><span class="err">&#39;</span><span class="o">]</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">#Substitue</span> <span class="err">&#39;color&#39;</span> <span class="err">with</span> <span class="err">your</span> <span class="err">highlight</span> <span class="err">color</span>
-</span><span class='line'><span class="err">$</span> <span class="err">echo</span> <span class="s2">&quot;\$greyshade: color;&quot;</span> <span class="err">&gt;&gt;</span> <span class="err">sass/custom/_colors.scss</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;theme&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="s2">&quot;install[greyshade]&quot;</span>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">generate</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">add</span> <span class="err">.</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">commit</span> <span class="err">-m</span> <span class="s2">&quot;theme&quot;</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">push</span> <span class="err">origin</span> <span class="err">source</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">deploy</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -377,9 +368,9 @@
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">&lt;li&gt;&lt;a</span> <span class="err">href=</span><span class="s2">&quot;/&quot;</span><span class="err">&gt;Blog&lt;/a&gt;&lt;/li&gt;</span>
-</span><span class='line'><span class="err">&lt;li&gt;&lt;a</span> <span class="err">href=</span><span class="s2">&quot;http://about.me/shashankmehta&quot;</span><span class="err">&gt;About&lt;/a&gt;&lt;/li&gt;</span>
-</span><span class='line'><span class="err">&lt;li&gt;&lt;a</span> <span class="err">href=</span><span class="s2">&quot;/blog/archives&quot;</span><span class="err">&gt;Archives&lt;/a&gt;&lt;/li&gt;</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="o">&gt;</span><span class="n">Blog</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;http://about.me/shashankmehta&quot;</span><span class="o">&gt;</span><span class="n">About</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;/blog/archives&quot;</span><span class="o">&gt;</span><span class="n">Archives</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -392,13 +383,13 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">generate</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">add</span> <span class="err">.</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">commit</span> <span class="err">-m</span> <span class="s2">&quot;theme&quot;</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">push</span> <span class="err">origin</span> <span class="err">source</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;theme&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">deploy</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -411,14 +402,14 @@
 <p>将<code>plugins/category_list_tag.rb</code>中的</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">category_url</span> <span class="err">=</span> <span class="err">File.join(category_dir,</span> <span class="err">category.gsub(/_|\P</span><span class="p">{</span><span class="err">Word</span><span class="p">}</span><span class="err">/,</span> <span class="err">&#39;-&#39;).gsub(/-</span><span class="p">{</span><span class="err">2,</span><span class="p">}</span><span class="err">/,</span> <span class="err">&#39;-&#39;).downcase)</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">category_url</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">category_dir</span><span class="o">,</span> <span class="n">category</span><span class="o">.</span><span class="na">gsub</span><span class="o">(/</span><span class="n">_</span><span class="o">|</span><span class="err">\</span><span class="n">P</span><span class="o">{</span><span class="n">Word</span><span class="o">}/,</span> <span class="sc">&#39;-&#39;</span><span class="o">).</span><span class="na">gsub</span><span class="o">(/-{</span><span class="mi">2</span><span class="o">,}/,</span> <span class="sc">&#39;-&#39;</span><span class="o">).</span><span class="na">downcase</span><span class="o">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>替换成</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">category_url</span> <span class="err">=</span> <span class="err">File.join(category_dir,</span> <span class="err">category.to_url.downcase)</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">category_url</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">category_dir</span><span class="o">,</span> <span class="n">category</span><span class="o">.</span><span class="na">to_url</span><span class="o">.</span><span class="na">downcase</span><span class="o">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -439,13 +430,13 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">#如果用的是终端</span>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">new_post</span><span class="p">[</span><span class="err">&#39;title&#39;</span><span class="p">]</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">如果用的是终端</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">new_post</span><span class="o">[</span><span class="err">&#39;</span><span class="n">title</span><span class="err">&#39;</span><span class="o">]</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">#如果用的是ZSH</span>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="s2">&quot;new_post[title]&quot;</span>
-</span><span class='line'><span class="err">#或者</span>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">new_post\</span><span class="p">[</span><span class="err">&#39;title&#39;\</span><span class="p">]</span>
+</span><span class='line'><span class="err">#</span><span class="n">如果用的是ZSH</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="s">&quot;new_post[title]&quot;</span>
+</span><span class='line'><span class="err">#</span><span class="n">或者</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">new_post</span><span class="err">\</span><span class="o">[</span><span class="err">&#39;</span><span class="n">title</span><span class="err">&#39;\</span><span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -464,31 +455,176 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="err">#markdown写博文</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">markdown写博文</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">preview</span> <span class="err">#localhost:</span><span class="mi">4000</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">preview</span> <span class="err">#</span><span class="nl">localhost:</span><span class="mi">4000</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">generate</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">add</span> <span class="err">.</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">commit</span> <span class="err">-m</span> <span class="s2">&quot;comment&quot;</span>
-</span><span class='line'><span class="err">$</span> <span class="err">git</span> <span class="err">push</span> <span class="err">origin</span> <span class="err">source</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;comment&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
 </span><span class='line'>
-</span><span class='line'><span class="err">$</span> <span class="err">rake</span> <span class="err">deploy</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<hr />
+<h1>后记：解决Octopress博客访问慢的问题</h1>
+
+<p>由于国内环境的原因造成了访问博客速度“惊人”，所以对Octopress进行相关改造成了必须的步骤（如果你能接受手机端打开时间超过20秒），好了废话不多讲</p>
+
+<h2>清理没用的服务</h2>
+
+<p>修改<code>_config.yml</code>，由于<code>Octopress</code>预设了一些像<code>Disqus</code>评论、<code>Github</code>仓库、<code>Twitter</code>等访问较慢的一些网站，这个相关服务在国内访问相对较慢，这里你只要把这些不需要的服务注释掉就好了</p>
+
+<h3>去除Disqus评论</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="mi">1</span> <span class="err">#</span><span class="n">Disqus</span> <span class="n">Comments</span>
+</span><span class='line'><span class="mi">2</span> <span class="err">#</span><span class="nl">disqus_short_name:</span> <span class="n">androidyue</span>
+</span><span class='line'><span class="mi">3</span> <span class="err">#</span><span class="nl">disqus_show_comment_count:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>去掉Github仓库展示</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Github</span> <span class="n">repositories</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_user:</span> <span class="n">androidyue</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_repo_count:</span> <span class="mi">11</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_show_profile_link:</span> <span class="kc">true</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_skip_forks:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Twitter按钮</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Twitter</span>
+</span><span class='line'><span class="err">#</span><span class="nl">twitter_user:</span>
+</span><span class='line'><span class="err">#</span><span class="nl">twitter_tweet_button:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Facebook Like</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Facebook</span> <span class="n">Like</span>
+</span><span class='line'><span class="err">#</span><span class="nl">facebook_like:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>去除Google+相关</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Google</span> <span class="o">+</span><span class="mi">1</span>
+</span><span class='line'><span class="err">#</span><span class="nl">google_plus_one:</span> <span class="kc">true</span>
+</span><span class='line'><span class="err">#</span><span class="nl">google_plus_one_size:</span> <span class="n">medium</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span><span class="n">Google</span> <span class="n">Plus</span> <span class="n">Profile</span>
+</span><span class='line'><span class="err">#</span><span class="nl">Hidden:</span> <span class="n">No</span> <span class="n">visible</span> <span class="n">button</span><span class="o">,</span> <span class="n">just</span> <span class="n">add</span> <span class="n">author</span> <span class="n">information</span> <span class="n">to</span> <span class="n">search</span> <span class="n">results</span>
+</span><span class='line'><span class="err">#</span><span class="nl">googleplus_user:</span>
+</span><span class='line'><span class="err">#</span><span class="nl">googleplus_hidden:</span> <span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>替换快速的请求资源</h2>
+
+<p>其实，真正解决加速的重要环节可能是这里，因为Octopress很多依赖于Google的库和资源</p>
+
+<h3>解决Google Analytics巨慢的问题</h3>
+
+<p><a href="http://droidyue.com/">这里</a>给出的方案是自己在七牛上存放<code>ga.js</code>(主要是<code>Google Analytics</code>的相关方法)，但是我这边遇到了HTTPS访问HTTP的问题我就直接在自己的工程目录下存放了<code>ga.js</code>，参考如下，修改<code>source/_includes/google_analytics.html</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span>     <span class="p">...</span>
+</span><span class='line'><span class="nx">$</span>     <span class="nx">_gaq</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">&#39;_trackPageview&#39;</span><span class="p">]);</span>
+</span><span class='line'><span class="nx">$</span>
+</span><span class='line'><span class="nx">$</span>     <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'><span class="nx">$</span>         <span class="kd">var</span> <span class="nx">ga</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">$</span>         <span class="nx">ga</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;text/javascript&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">$</span>         <span class="nx">ga</span><span class="p">.</span><span class="nx">async</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="nx">$</span>         <span class="nx">ga</span><span class="p">.</span><span class="nx">src</span><span class="o">=</span><span class="s1">&#39;http://xxxx.com/ga.js&#39;</span><span class="p">;</span><span class="c1">//自己工程目录或者CDN</span>
+</span><span class='line'><span class="nx">$</span>     <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>  
+</span><span class='line'><span class="nx">$</span>         <span class="nx">s</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">ga</span><span class="p">,</span> <span class="nx">s</span><span class="p">);</span>
+</span><span class='line'><span class="nx">$</span>     <span class="p">})();</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>解决fonts.googleapis.com</h3>
+
+<p>问了节省大家时间，我给你们找了一个<a href="http://blog.csdn.net/maxsky/article/details/51980438">国内外优秀前端 CDN 加速服务</a>，去找一些你们自己认为信得过的CDN服务商(例如：不要选360了因为已经不再维护了)</p>
+
+<p>修改文件<code>/source/_includes/custom/head.html</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;https://fonts.cat.net/css?family=PT+Serif:regular,italic,bold,bolditalic&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/css&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;https://fonts.cat.net/css?family=PT+Sans:regular,italic,bold,bolditalic&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/css&quot;</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>解决ajax.googleapis.com</h3>
+
+<p>修改<code>source/_includes/head.html</code>，还是利用上面的CDN替换<code>jquery.min.js</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;canonical&quot;</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;/favicon.png&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;icon&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;/stylesheets/screen.css&quot;</span> <span class="nx">media</span><span class="o">=</span><span class="s2">&quot;screen, projection&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/css&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;/atom.xml&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;alternate&quot;</span> <span class="nx">title</span><span class="o">=</span><span class="s2">&quot;一骑当千&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;application/atom+xml&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;/javascripts/modernizr-2.0.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;!</span><span class="nb">window</span><span class="p">.</span><span class="nx">jQuery</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">unescape</span><span class="p">(</span><span class="s1">&#39;%3Cscript src=&quot;./javascripts/libs/jquery.min.js&quot;%3E%3C/script%3E&#39;</span><span class="p">))</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;/javascripts/octopress.js&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/javascript&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h1>参考资料</h1>
 
 <ul>
 <li><a href="http://octopress.org/">http://octopress.org/</a></li>
-<li><a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/">http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/</a></li>
-<li><a href="http://www.cnblogs.com/peterpan507/p/3538057.html">http://www.cnblogs.com/peterpan507/p/3538057.html</a></li>
+<li><a href="http://msching.github.io/">http://msching.github.io/</a></li>
 <li><a href="http://biaobiaoqi.me/blog/2013/03/21/building-octopress-in-github-mac/">http://biaobiaoqi.me/blog/2013/03/21/building-octopress-in-github-mac/</a></li>
 <li><a href="http://biaobiaoqi.me/blog/2013/07/10/decorate-octopress/">http://biaobiaoqi.me/blog/2013/07/10/decorate-octopress/</a></li>
-<li><a href="http://yanping.me/cn/blog/2012/01/07/theming-and-customization/">http://yanping.me/cn/blog/2012/01/07/theming-and-customization/</a></li>
+<li><a href="http://droidyue.com/blog/2014/06/22/fix-octopress-slow-loading-speed-issue-in-china-mainland/index.html">http://droidyue.com/blog/2014/06/22/fix-octopress-slow-loading-speed-issue-in-china-mainland/index.html</a></li>
 </ul>
 
 </div>
