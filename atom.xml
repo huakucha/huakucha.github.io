@@ -4,7 +4,7 @@
   <title><![CDATA[一骑当千]]></title>
   <link href="https://huakucha.github.io/atom.xml" rel="self"/>
   <link href="https://huakucha.github.io/"/>
-  <updated>2017-11-15T11:42:45+08:00</updated>
+  <updated>2017-11-15T13:03:03+08:00</updated>
   <id>https://huakucha.github.io/</id>
   <author>
     <name><![CDATA[花裤衩]]></name>
@@ -12,6 +12,157 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python计算Dex头中的checksum和signature]]></title>
+    <link href="https://huakucha.github.io/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/"/>
+    <updated>2017-11-15T12:33:36+08:00</updated>
+    <id>https://huakucha.github.io/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature</id>
+    <content type="html"><![CDATA[<h1>前言</h1>
+
+<p>本文主要编写修改Android程序DEX头中checksum、signature 和file_size头信息的Python脚本，修改checksum、signature的场景一般出现在加壳以及逆向之后重签名之后对文件完整性进行修改</p>
+
+<p>我们先看一下文件头记录了dex文件的一些基本信息 :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">magic</span>     <span class="p">:</span> <span class="n">dex</span><span class="err">魔术字</span><span class="p">,</span> <span class="err">固定信息</span><span class="p">:</span> <span class="n">dex</span>\<span class="n">n035</span>
+</span><span class='line'><span class="n">checksum</span>  <span class="p">:</span> <span class="n">alder32</span><span class="err">算法</span><span class="p">,</span> <span class="err">去除了</span><span class="n">magic</span><span class="err">和</span><span class="n">checksum</span><span class="err">字段之外的所有内容的校验码</span>
+</span><span class='line'><span class="n">signature</span> <span class="p">:</span> <span class="n">sha</span><span class="o">-</span><span class="mi">1</span><span class="err">签名</span><span class="p">,</span> <span class="err">去除了</span><span class="n">magic</span><span class="err">、</span><span class="n">checksum</span><span class="err">和</span><span class="n">signature</span><span class="err">字段之外的所有内容的签名</span>
+</span><span class='line'><span class="n">fileSize</span>  <span class="p">:</span> <span class="err">整个</span><span class="n">dex</span><span class="err">的文件大小</span>
+</span><span class='line'><span class="n">headerSize</span><span class="p">:</span> <span class="err">整个</span><span class="n">dex</span><span class="err">文件头的大小</span> <span class="p">(</span><span class="err">固定大小为</span><span class="mh">0x70</span><span class="p">)</span>
+</span><span class='line'><span class="n">endianTag</span> <span class="p">:</span> <span class="err">字节序</span> <span class="p">(</span><span class="err">大尾方式、小尾方式</span><span class="p">)</span><span class="err">默认为小尾方式</span> <span class="o">&lt;--&gt;</span> <span class="mh">0x12345678</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>首先导入修改Dex所需要的python库</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">zlib</span><span class="o">,</span><span class="nn">hashlib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">struct</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Checksum</h3>
+
+<p><code>Dex</code>文件头中的<code>checksum</code>是用来校验文件的完整性，使用<code>adler32</code>算法。在<code>python</code>中的<code>zlib</code>库中有该算法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">repairChecksum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sourceData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">checkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">checksum</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">adler32</span><span class="p">(</span><span class="n">checkdata</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">checkInt</span> <span class="o">=</span> <span class="n">checksum</span> <span class="o">&amp;</span> <span class="mh">0xffffffff</span>
+</span><span class='line'>  <span class="nb">bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;i&#39;</span><span class="p">,</span><span class="n">checksum</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;头部原checksum:&quot;</span><span class="p">,</span><span class="n">sourceData</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;计算checksum:&quot;</span><span class="p">,</span><span class="n">checkInt</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span> <span class="nb">bytes</span> <span class="o">==</span> <span class="n">sourceData</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum效验正常&#39;</span>
+</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum效验异常&#39;</span>
+</span><span class='line'>      <span class="n">file_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+</span><span class='line'>      <span class="c">#byte1 = struct.unpack(&#39;i&#39;,byte0)</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum修复成功&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Signature</h3>
+
+<p><code>Dex</code>头中的<code>Signature</code>是对<code>dex</code>文件的签名，签名<code>signature</code>字段之后的数据（32字节之后），在<code>hashlib</code>中有该算法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">repairSignature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>  <span class="c">#4 + 4 + 4 + 20</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sourceData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sigdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha1</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sigdata</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sha0</span> <span class="o">=</span> <span class="n">sha1</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha2</span> <span class="o">=</span> <span class="n">sha1</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;signature:&quot;</span><span class="p">,</span><span class="n">sha0</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;现signature:&quot;</span><span class="p">,</span><span class="n">sha2</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;原signature:&quot;</span><span class="p">,</span><span class="n">sourceData</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span> <span class="n">sourceData</span> <span class="o">==</span> <span class="n">sha2</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验正常&#39;</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验异常</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sha2</span><span class="p">)):</span>
+</span><span class='line'>            <span class="n">salt</span> <span class="o">=</span> <span class="n">sha2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">file_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'>            <span class="nb">bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="n">salt</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验修复成功&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我在方法中加入了效验跟修复功能，为了方便查看，使用010 Editor打开刚刚生成的Dex文件，在官网下载一个Dex模板的脚本，然后运行修改之后可以用此python做完整性效验修复&hellip;</p>
+
+<h1>参考资料</h1>
+
+<ul>
+<li><a href="http://blog.csdn.net/feglass/article/details/51761902">http://blog.csdn.net/feglass/article/details/51761902</a></li>
+<li><a href="http://www.sweetscape.com/010editor/repository/templates/file_info.php?file=DEX.bt">http://www.sweetscape.com/010editor/repository/templates/file_info.php?file=DEX.bt</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[基于Github和Octopress搭建属于自己的博客]]></title>
