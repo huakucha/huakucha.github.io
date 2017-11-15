@@ -300,7 +300,7 @@ $ 		s.parentNode.insertBefore(ga, s);
 $ 	})();
 $ </script>
 ```
-###解决fonts.googleapis.com
+###解决fonts.googleapis.comm问题
 问了节省大家时间，我给你们找了一个[国内外优秀前端 CDN 加速服务](http://blog.csdn.net/maxsky/article/details/51980438)，去找一些你们自己认为信得过的CDN服务商(例如：不要选360了因为已经不再维护了)
 
 修改文件`/source/_includes/custom/head.html`
@@ -311,7 +311,7 @@ $ <link href="https://fonts.cat.net/css?family=PT+Sans:regular,italic,bold,boldi
 ```
 
 
-###解决ajax.googleapis.com
+###解决ajax.googleapis.comm问题
 修改`source/_includes/head.html`，还是利用上面的CDN替换`jquery.min.js`
 
 
