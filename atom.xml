@@ -4,7 +4,7 @@
   <title><![CDATA[一骑当千]]></title>
   <link href="https://huakucha.github.io/atom.xml" rel="self"/>
   <link href="https://huakucha.github.io/"/>
-  <updated>2017-11-15T16:22:35+08:00</updated>
+  <updated>2017-11-16T14:50:14+08:00</updated>
   <id>https://huakucha.github.io/</id>
   <author>
     <name><![CDATA[花裤衩]]></name>
@@ -371,6 +371,14 @@
 <h3>安装第三方主题</h3>
 
 <p>Octopress有许多第三方主题可以选择，首先在<a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">这里Github</a>上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程，我使用的是<code>classic-martinb</code></p>
+
+<div class="github-card" data-github="imathis/octopress" data-width="400" data-height="" data-theme="default"></div>
+
+
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+
+
+
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
