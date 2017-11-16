@@ -2,6 +2,7 @@
 layout: post
 title: "基于Github和Octopress搭建属于自己的博客"
 date: 2017-11-13 17:53:39 +0800
+updated: 2017-11-15 17:53:39 +0800
 comments: true
 tags: [Github, Octopress]
 description: "我的第一篇Octopress博客"
@@ -145,6 +146,9 @@ $ rake deploy
 
 ###安装第三方主题
 Octopress有许多第三方主题可以选择，首先在[这里Github](https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes)上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程，我使用的是`classic-martinb`
+
+<div class="github-card" data-github="imathis/octopress" data-width="400" data-height="" data-theme="default"></div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 
 ```
 $ cd octopress

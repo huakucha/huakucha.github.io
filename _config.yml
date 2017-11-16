@@ -15,9 +15,6 @@ description: 花裤衩的技术网站
 # Additionally, %o will give you the ordinal representation of the day
 date_format: '%b %d, %Y'
 
-gems:
-  - octopress-date-format
-
 # RSS / Email (optional) subscription links (change if using something like Feedburner)
 subscribe_rss: /atom.xml
 subscribe_email:
