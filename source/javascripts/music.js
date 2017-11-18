@@ -4,7 +4,7 @@
     var clientWidth = $('body').width()
 
     if (clientWidth > 768) {
-        var musicConf = JSON.parse(musicModule.musicConfig)
+        var musicConf = musicModule.musicConfig
         var lrcConfig = musicModule.lrcConfig
         musicConf.element = document.getElementById('cube-player')
 
