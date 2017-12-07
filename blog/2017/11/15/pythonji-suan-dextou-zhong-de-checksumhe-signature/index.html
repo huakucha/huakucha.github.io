@@ -1,0 +1,513 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Python计算Dex头中的checksum和signature - 一骑当千</title>
+  <meta name="author" content="花裤衩">
+
+  
+  <meta name="description" content="Python计算Dex头中的checksum和signature">
+  
+
+  <!-- http://t.co/dKP3o1e
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://huakucha.github.io/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="一骑当千" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href="https://fonts.cat.net/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="https://fonts.cat.net/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+    function addBlankTargetForLinks () {
+    $('a[href^="https"]').each(function(){
+           $(this).attr('target', '_blank');
+       });
+    }
+
+    $(document).bind('DOMNodeInserted', function(event) {
+        addBlankTargetForLinks();
+    });
+</script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-109672322-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      //ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = '/javascripts/ga.js';
+      //ga.src = 'https://www.googletagmanager.com/gtag/js?id=UA-109672322-1';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><div class="header-left">
+  <hgroup>
+  <h1><a href="/">一骑当千</a></h1>
+  
+  <div class="subtitle">
+    <h2>我愿陪你走遍整个艾泽拉斯.</h2>
+  </div>
+  
+  </hgroup>
+  
+</div>
+
+<div class="header-right">
+  <ul class="main-navigation">
+ <div> 
+  <li><a href="/">主页 blog</a></li></div><div class="spacer"></div>
+     <div> 
+  <li><a href="/blog/categories">分类 categories</a></li></div><div class="spacer"></div>
+       <div> 
+  <li><a href="/blog/archives">归档 archive</a></li></div><div class="spacer"></div>
+         <div> 
+  <li><a href="/about">关于 About</a></li></div>
+</ul>
+  
+
+  <!--返回顶部开始
+<div id="full" border=1 style="width:50px; height:50px; position:fixed; right:80px; bottom:100px; z-index:100; text-align:center; background-color:rgb(114, 114, 114); cursor:pointer;">
+    <a href="#" onclick="goTop();return false;">
+            <i class="fa fa-angle-up fa-2x" aria-hidden="true" border=0 alt="返回顶部"></i>
+    </a>
+   </div>
+<script src="/javascripts/top.js" type="text/javascript"></script>
+-->
+   <!--返回顶部结束-->
+</div>
+</header>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Python计算Dex头中的checksum和signature</h1>
+    
+    
+      <p class="meta">
+          
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+<i style="color: #555;" class="fa fa-calendar fa-1x" aria-hidden="true"></i>
+<time style="color: #555;" datetime="2017-11-15T12:33:36+08:00" data-updated="true" itemprop="datePublished">
+
+Nov 15, 2017
+
+
+</time>
+
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="https://huakucha.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h1>前言</h1>
+
+<p>本文主要编写修改Android程序DEX头中checksum、signature 和file_size头信息的Python脚本，修改checksum、signature的场景一般出现在加壳以及逆向之后重签名之后对文件完整性进行修改</p>
+
+<!--more-->
+
+
+<p>我们先看一下文件头记录了dex文件的一些基本信息 :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">magic</span>     <span class="p">:</span> <span class="n">dex</span><span class="err">魔术字</span><span class="p">,</span> <span class="err">固定信息</span><span class="p">:</span> <span class="n">dex</span>\<span class="n">n035</span>
+</span><span class='line'><span class="n">checksum</span>  <span class="p">:</span> <span class="n">alder32</span><span class="err">算法</span><span class="p">,</span> <span class="err">去除了</span><span class="n">magic</span><span class="err">和</span><span class="n">checksum</span><span class="err">字段之外的所有内容的校验码</span>
+</span><span class='line'><span class="n">signature</span> <span class="p">:</span> <span class="n">sha</span><span class="o">-</span><span class="mi">1</span><span class="err">签名</span><span class="p">,</span> <span class="err">去除了</span><span class="n">magic</span><span class="err">、</span><span class="n">checksum</span><span class="err">和</span><span class="n">signature</span><span class="err">字段之外的所有内容的签名</span>
+</span><span class='line'><span class="n">fileSize</span>  <span class="p">:</span> <span class="err">整个</span><span class="n">dex</span><span class="err">的文件大小</span>
+</span><span class='line'><span class="n">headerSize</span><span class="p">:</span> <span class="err">整个</span><span class="n">dex</span><span class="err">文件头的大小</span> <span class="p">(</span><span class="err">固定大小为</span><span class="mh">0x70</span><span class="p">)</span>
+</span><span class='line'><span class="n">endianTag</span> <span class="p">:</span> <span class="err">字节序</span> <span class="p">(</span><span class="err">大尾方式、小尾方式</span><span class="p">)</span><span class="err">默认为小尾方式</span> <span class="o">&lt;--&gt;</span> <span class="mh">0x12345678</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>首先导入修改Dex所需要的python库</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">zlib</span><span class="o">,</span><span class="nn">hashlib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">struct</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Checksum</h3>
+
+<p><code>Dex</code>文件头中的<code>checksum</code>是用来校验文件的完整性，使用<code>adler32</code>算法。在<code>python</code>中的<code>zlib</code>库中有该算法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">repairChecksum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sourceData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">checkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">checksum</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">adler32</span><span class="p">(</span><span class="n">checkdata</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">checkInt</span> <span class="o">=</span> <span class="n">checksum</span> <span class="o">&amp;</span> <span class="mh">0xffffffff</span>
+</span><span class='line'>  <span class="nb">bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;i&#39;</span><span class="p">,</span><span class="n">checksum</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;头部原checksum:&quot;</span><span class="p">,</span><span class="n">sourceData</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;计算checksum:&quot;</span><span class="p">,</span><span class="n">checkInt</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span> <span class="nb">bytes</span> <span class="o">==</span> <span class="n">sourceData</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum效验正常&#39;</span>
+</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum效验异常&#39;</span>
+</span><span class='line'>      <span class="n">file_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+</span><span class='line'>      <span class="c">#byte1 = struct.unpack(&#39;i&#39;,byte0)</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum修复成功&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Signature</h3>
+
+<p><code>Dex</code>头中的<code>Signature</code>是对<code>dex</code>文件的签名，签名<code>signature</code>字段之后的数据（32字节之后），在<code>hashlib</code>中有该算法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">repairSignature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>  <span class="c">#4 + 4 + 4 + 20</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sourceData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sigdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha1</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sigdata</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sha0</span> <span class="o">=</span> <span class="n">sha1</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha2</span> <span class="o">=</span> <span class="n">sha1</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;signature:&quot;</span><span class="p">,</span><span class="n">sha0</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;现signature:&quot;</span><span class="p">,</span><span class="n">sha2</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;原signature:&quot;</span><span class="p">,</span><span class="n">sourceData</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span> <span class="n">sourceData</span> <span class="o">==</span> <span class="n">sha2</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验正常&#39;</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验异常</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sha2</span><span class="p">)):</span>
+</span><span class='line'>            <span class="n">salt</span> <span class="o">=</span> <span class="n">sha2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">file_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'>            <span class="nb">bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="n">salt</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验修复成功&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我在方法中加入了效验跟修复功能，为了方便查看，使用010 Editor打开刚刚生成的Dex文件，在官网下载一个Dex模板的脚本，然后运行修改之后可以用此python做完整性效验修复&hellip;</p>
+
+<h1>参考资料</h1>
+
+<ul>
+<li><a href="http://blog.csdn.net/feglass/article/details/51761902">http://blog.csdn.net/feglass/article/details/51761902</a></li>
+<li><a href="http://www.sweetscape.com/010editor/repository/templates/file_info.php?file=DEX.bt">http://www.sweetscape.com/010editor/repository/templates/file_info.php?file=DEX.bt</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">花裤衩</span></span>
+
+        
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+<i style="color: #555;" class="fa fa-calendar fa-1x" aria-hidden="true"></i>
+<time style="color: #555;" datetime="1970-01-01T08:00:00+08:00" class="updated" itemprop="dateModified">Updated 
+
+
+</time>
+
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/android/'>android</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2017/11/13/ji-yu-githubhe-octopressda-jian-shu-yu-zi-ji-de-bo-ke/" title="Previous Post: 基于Github和Octopress搭建属于自己的博客">&laquo; 基于Github和Octopress搭建属于自己的博客</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  <section>
+  <p>Hi, I'm <a href="https://github.com/huakucha">huakucha <i class="fa fa-space-shuttle fa-1x"></i></a>
+  </p>
+  
+
+<img src="/images/site.picture_url.jpeg" title="Ninja Attack!" >
+  <p><i class="fa fa-book fa-1x"></i> : That all the best restaurants in Tokyo are that small and do only one type of dish : sushi or tempura or teriyaki <i class="fa fa-heart fa-1x" aria-hidden="true"></i>. Because they want to do that thing well and beautifully . And it's not about quantity. It's about taking pleasure in the perfection and beauty</p>
+  <div class="social-icons">
+    
+
+    
+
+    
+<a style="text-decoration: none;" href="https://plus.google.com/u/0/105543758856554771135"<i class="fa fa-meetup fa-3x"></i></a>
+
+
+    
+    <a href="https://github.com/huakucha"><i class="fa fa-github-alt fa-3x"></i></a>
+
+    
+    <a href="https://twitter.com/ihuakucha"><i class="fa fa-twitter fa-3x"></i></a>  
+
+
+
+  </div>
+</section>
+  <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/">Python计算Dex头中的checksum和signature</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/11/13/ji-yu-githubhe-octopressda-jian-shu-yu-zi-ji-de-bo-ke/">基于Github和Octopress搭建属于自己的博客</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="blog-categories">
+    <li class='category'><a href='/blog/categories/android/'>android (1)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>octopress (1)</a></li>
+
+  </ul>
+</section>
+<section>
+	<link rel="stylesheet" href="/stylesheets/music.css">
+	<div class="cube-music cube-sidebar" id="cube-music">
+		<div style="margin: 0px;" class="cube-player aplayer" id="cube-player"></div>
+	</div>
+	<script>
+
+		(function (window) {
+			window.musicModule = {}
+			window.musicModule.musicConfig = {
+				"narrow": false,
+				"autoplay": false,
+				"showlrc": 3,
+				"theme": "#b7daff",
+				"mutex": true,
+				"mode": "circulation",
+				"preload": "auto",
+				"listmaxheight": "513px",
+				"music": [
+					{
+						"title": "Dear friends",
+						"author": "TRIPLANE",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/TRIPLANE - Dear friends.mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/Dear friends - TRIPLANE.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/TRIPLANE - Dear friends.jpg"
+					},
+					{
+						"title": "Butter-Fly",
+						"author": "和田光司",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/和田光司 - Butter-Fly (ピアノヴァージョン).mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/Butter-Fly (ピアノヴァージョン) - 和田光司.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/和田光司 - Butter-Fly (ピアノヴァージョン).jpg"
+					},
+					{
+						"title": "宵闇花火",
+						"author": "葉月ゆら",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/葉月ゆら - 宵闇花火.mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/宵闇花火 - 葉月ゆら.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/葉月ゆら - 宵闇花火.jpg"
+					}
+				]
+			}
+			window.musicModule.lrcConfig = {
+				open: '开启歌词',
+				close: '关闭歌词'
+			}
+		})(window)
+	</script>
+	<script src='/javascripts/libs/Aplayer.js'></script>
+	<script src="/javascripts/music.js"></script>
+</section>
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/105543758856554771135?rel=author">
+      <img src="https://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  本站点采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享 署名-非商业性使用-相同方式共享 4.0 国际 许可协议</a>
+</p>
+
+<p>
+<span>Copyright &copy; 2017  花裤衩 -</span>
+<span class="credit">Powered by <a href="http://octopress.org">Octopress</a> using the <a href="https://github.com/fapper/classic-martinb">classic-martinb</a> theme</span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'https-huakucha-github-io';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://huakucha.github.io/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/';
+        var disqus_url = 'https://huakucha.github.io/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

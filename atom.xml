@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[一骑当千]]></title>
+  <link href="https://huakucha.github.io/atom.xml" rel="self"/>
+  <link href="https://huakucha.github.io/"/>
+  <updated>2017-12-07T17:16:52+08:00</updated>
+  <id>https://huakucha.github.io/</id>
+  <author>
+    <name><![CDATA[花裤衩]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Python计算Dex头中的checksum和signature]]></title>
+    <link href="https://huakucha.github.io/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/"/>
+    <updated>2017-11-15T12:33:36+08:00</updated>
+    <id>https://huakucha.github.io/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature</id>
+    <content type="html"><![CDATA[<h1>前言</h1>
+
+<p>本文主要编写修改Android程序DEX头中checksum、signature 和file_size头信息的Python脚本，修改checksum、signature的场景一般出现在加壳以及逆向之后重签名之后对文件完整性进行修改</p>
+
+<!--more-->
+
+
+<p>我们先看一下文件头记录了dex文件的一些基本信息 :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">magic</span>     <span class="p">:</span> <span class="n">dex</span><span class="err">魔术字</span><span class="p">,</span> <span class="err">固定信息</span><span class="p">:</span> <span class="n">dex</span>\<span class="n">n035</span>
+</span><span class='line'><span class="n">checksum</span>  <span class="p">:</span> <span class="n">alder32</span><span class="err">算法</span><span class="p">,</span> <span class="err">去除了</span><span class="n">magic</span><span class="err">和</span><span class="n">checksum</span><span class="err">字段之外的所有内容的校验码</span>
+</span><span class='line'><span class="n">signature</span> <span class="p">:</span> <span class="n">sha</span><span class="o">-</span><span class="mi">1</span><span class="err">签名</span><span class="p">,</span> <span class="err">去除了</span><span class="n">magic</span><span class="err">、</span><span class="n">checksum</span><span class="err">和</span><span class="n">signature</span><span class="err">字段之外的所有内容的签名</span>
+</span><span class='line'><span class="n">fileSize</span>  <span class="p">:</span> <span class="err">整个</span><span class="n">dex</span><span class="err">的文件大小</span>
+</span><span class='line'><span class="n">headerSize</span><span class="p">:</span> <span class="err">整个</span><span class="n">dex</span><span class="err">文件头的大小</span> <span class="p">(</span><span class="err">固定大小为</span><span class="mh">0x70</span><span class="p">)</span>
+</span><span class='line'><span class="n">endianTag</span> <span class="p">:</span> <span class="err">字节序</span> <span class="p">(</span><span class="err">大尾方式、小尾方式</span><span class="p">)</span><span class="err">默认为小尾方式</span> <span class="o">&lt;--&gt;</span> <span class="mh">0x12345678</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>首先导入修改Dex所需要的python库</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">zlib</span><span class="o">,</span><span class="nn">hashlib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">struct</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Checksum</h3>
+
+<p><code>Dex</code>文件头中的<code>checksum</code>是用来校验文件的完整性，使用<code>adler32</code>算法。在<code>python</code>中的<code>zlib</code>库中有该算法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">repairChecksum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sourceData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">checkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">checksum</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">adler32</span><span class="p">(</span><span class="n">checkdata</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">checkInt</span> <span class="o">=</span> <span class="n">checksum</span> <span class="o">&amp;</span> <span class="mh">0xffffffff</span>
+</span><span class='line'>  <span class="nb">bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;i&#39;</span><span class="p">,</span><span class="n">checksum</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;头部原checksum:&quot;</span><span class="p">,</span><span class="n">sourceData</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;计算checksum:&quot;</span><span class="p">,</span><span class="n">checkInt</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span> <span class="nb">bytes</span> <span class="o">==</span> <span class="n">sourceData</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum效验正常&#39;</span>
+</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum效验异常&#39;</span>
+</span><span class='line'>      <span class="n">file_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+</span><span class='line'>      <span class="c">#byte1 = struct.unpack(&#39;i&#39;,byte0)</span>
+</span><span class='line'>      <span class="k">print</span> <span class="s">&#39;checksum修复成功&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Signature</h3>
+
+<p><code>Dex</code>头中的<code>Signature</code>是对<code>dex</code>文件的签名，签名<code>signature</code>字段之后的数据（32字节之后），在<code>hashlib</code>中有该算法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">repairSignature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>  <span class="c">#4 + 4 + 4 + 20</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sourceData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sigdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha1</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sigdata</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">sha0</span> <span class="o">=</span> <span class="n">sha1</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sha2</span> <span class="o">=</span> <span class="n">sha1</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;signature:&quot;</span><span class="p">,</span><span class="n">sha0</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;现signature:&quot;</span><span class="p">,</span><span class="n">sha2</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;原signature:&quot;</span><span class="p">,</span><span class="n">sourceData</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span> <span class="n">sourceData</span> <span class="o">==</span> <span class="n">sha2</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验正常&#39;</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验异常</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sha2</span><span class="p">)):</span>
+</span><span class='line'>            <span class="n">salt</span> <span class="o">=</span> <span class="n">sha2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">file_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'>            <span class="nb">bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="n">salt</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&#39;SHA1效验修复成功&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我在方法中加入了效验跟修复功能，为了方便查看，使用010 Editor打开刚刚生成的Dex文件，在官网下载一个Dex模板的脚本，然后运行修改之后可以用此python做完整性效验修复&hellip;</p>
+
+<h1>参考资料</h1>
+
+<ul>
+<li><a href="http://blog.csdn.net/feglass/article/details/51761902">http://blog.csdn.net/feglass/article/details/51761902</a></li>
+<li><a href="http://www.sweetscape.com/010editor/repository/templates/file_info.php?file=DEX.bt">http://www.sweetscape.com/010editor/repository/templates/file_info.php?file=DEX.bt</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[基于Github和Octopress搭建属于自己的博客]]></title>
+    <link href="https://huakucha.github.io/blog/2017/11/13/ji-yu-githubhe-octopressda-jian-shu-yu-zi-ji-de-bo-ke/"/>
+    <updated>2017-11-13T17:53:39+08:00</updated>
+    <id>https://huakucha.github.io/blog/2017/11/13/ji-yu-githubhe-octopressda-jian-shu-yu-zi-ji-de-bo-ke</id>
+    <content type="html"><![CDATA[<h1>前言</h1>
+
+<p>首先感谢<a href="http://msching.github.io/">程哥</a>的支持，我大致也是看到他的博客才萌生搭Blog的想法，再则希望通过技术博客的书写能理清技术的始末，为每个课题形成一个技术闭环，刚毕业技术积累不是很成熟，不部分时间都是在利用为知笔记、有道笔记的工具来记录工作中所积累的知识，对此我也进行了一些尝试，但最终因为国内的一些博客站点糟糕的排版、设计、代码高亮等等各种原因而放弃了。本着开源分享的心态我想把几年的心得与技术积累已文字的形式展示出来，经过一番Google之后我发现现在的程序猿们都偏向于<a href="http://octopress.org/">Octopress</a>这个开源的框架加上<a href="https://pages.github.com/">Github Pages</a>服务来搭建Blog，看上非常的高大上，排版、代码高亮都做得非常棒，本人主要使用<a href="http://zh.wikipedia.org/zh/Markdown">Markdown</a>做博客编辑，主要是<a href="http://25.io/mou/">Mou</a>作者不再更新软件了，作者就使用<a href="http://macdown.uranusjr.com/">MacDown</a>进行编辑，其实最近超级火的编辑器<a href="https://code.visualstudio.com/">Visual Studio Code</a>安装Markdown插件也是可以预览的</p>
+
+<!--more-->
+
+
+<h1>安装Octopress</h1>
+
+<p><a href="http://octopress.org/docs/setup/">这里</a>是Octopress的官方指南，各位可以按照其中的步骤进行安装，下面的文字只是记录了我个人的安装过程，可以为大家提供一些参考</p>
+
+<p>由于Octopress的使用需要Ruby，于是搭环境就这条路上的第一只拦路虎。Ruby版本繁多并且版本之间向下兼容做的不好，所以基于Ruby所做的框架大多要求特定版本的Ruby才能正常运行</p>
+
+<p>Octopress最低要求的是Ruby1.9.3（最低，已经不需要去强制去下载1.9.3），MacOSX自带的Ruby版本是2.x的，其实用现阶段的Ruby就ok了。Octopress的官方指南推荐使用的是RVM和rbenv，可以根据需要选择使用需要的工具</p>
+
+<h3>安装rbenv</h3>
+
+<p>我最近才第一次安装octopress（我的是OSX 10.12.5）的过程中我首先使用了RVM，但碰到了一些莫名的问题无法解决，最后还是使用了rbenv</p>
+
+<p>这里我使用<a href="http://brew.sh/">Homebrew</a>来安装rbenv，如果你没有Homebrew，打开终端，使用以下命令安装吧</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="nx">$</span> <span class="nx">ruby</span> <span class="o">-</span><span class="nx">e</span> <span class="s2">&quot;$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有了Homebrew就可以安装rbenv了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='Javascript'><span class='line'><span class="nx">$</span> <span class="nx">brew</span> <span class="nx">update</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">brew</span> <span class="nx">install</span> <span class="nx">rbenv</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">brew</span> <span class="nx">install</span> <span class="nx">ruby</span><span class="o">-</span><span class="nx">build</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>用rbenv安装Ruby</h3>
+
+<p>如果想尝试安装与管理其他版本的Ruby，可是使用如下的方式进行管理与切换：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">install</span> <span class="o">--</span><span class="nx">list</span>     <span class="err">#</span> <span class="err">列出所有</span> <span class="nx">ruby</span> <span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">install</span> <span class="mf">2.0</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="nx">p247</span> <span class="err">#</span> <span class="err">安装需要的</span><span class="nx">ruby</span><span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">versions</span>           <span class="err">#</span> <span class="err">所有已安装的</span><span class="nx">ruby</span><span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">global</span> <span class="mf">1.8</span><span class="p">.</span><span class="mi">7</span><span class="o">-</span><span class="nx">p352</span>  <span class="err">#</span> <span class="err">设置全局</span><span class="nx">ruby</span><span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">local</span> <span class="mf">1.9</span><span class="p">.</span><span class="mi">7</span>        <span class="err">#</span> <span class="err">设置当前文件夹</span><span class="nx">ruby</span><span class="err">版本</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">rehash</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rbenv</span> <span class="nx">uninstall</span> <span class="mf">2.00</span>     <span class="err">#卸载指定</span><span class="nx">ruby</span><span class="err">版本</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装RVM</h3>
+
+<p>在第二次安装octopress（OSX 10.11时代）的过程中依照之前的经验使用rbenv，但却怎么也安不上需要的ruby版本，最后换回了RVM</p>
+
+<p>安装octopress官方提供的安装方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">curl</span> <span class="o">-</span><span class="nx">L</span> <span class="nx">https</span><span class="o">:</span><span class="c1">//get.rvm.io | bash -s stable --ruby</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>用RVM安装Ruby</h3>
+
+<p>同上如果使用rvm安装ruby，我依照之前的经验安装1.9.3-p125的版本，但在编译时出现了一些错误，继而尝试了评论中<a href="">@lance_lan</a>提到得1.9.3-p551版本才安装成功</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">rvm</span> <span class="nx">install</span> <span class="nx">ruby</span><span class="o">-</span><span class="mf">1.9</span><span class="p">.</span><span class="mi">3</span><span class="o">-</span><span class="nx">p551</span> <span class="o">--</span><span class="kd">with</span><span class="o">-</span><span class="nx">gcc</span><span class="o">=</span><span class="nx">clang</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rvm</span> <span class="nx">use</span> <span class="mf">1.9</span><span class="p">.</span><span class="mi">3</span><span class="o">-</span><span class="nx">p551</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">rvm</span> <span class="nx">rubygems</span> <span class="nx">latest</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">ruby</span> <span class="o">--</span><span class="nx">version</span> <span class="err">#</span><span class="nx">ruby</span> <span class="mf">1.9</span><span class="p">.</span><span class="mi">3</span><span class="nx">p551</span> <span class="p">(</span><span class="mi">2014</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">13</span> <span class="nx">revision</span> <span class="mi">48407</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装Octopress</h3>
+
+<p>安装Ruby完成后就按照官方指南安装Octpress</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">clone</span> <span class="n">octopress</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="nl">git:</span><span class="c1">//github.com/imathis/octopress.git octopress</span>
+</span><span class='line'><span class="n">$</span> <span class="n">cd</span> <span class="n">octopress</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span><span class="n">安装依赖</span>
+</span><span class='line'><span class="n">$</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">bundler</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rbenv</span> <span class="n">rehash</span>  <span class="err">#</span> <span class="n">如果你刚才用了rbenv</span>
+</span><span class='line'><span class="n">$</span> <span class="n">bundle</span> <span class="n">install</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span><span class="n">安装octopress默认主题</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">install</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>部署</h1>
+
+<p>接下来需要把Blog部署到github上去，第一步要做的是去<a href="https://github.com/new">github</a>创建一个<code>username.github.io</code>的repo，比如我的就叫<code>huakucha.github.io</code></p>
+
+<p>然后运行以下命令，并依照提示完成github和Octopress的关联，关联的是你工程的全路径</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">setup_github_pages</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>创建博客</h1>
+
+<h3>生成博客</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把生成后的代码上传到github</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="err">&#39;</span><span class="n">create</span> <span class="n">blog</span><span class="err">&#39;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成后等待一段时间后就能访问<code>http://username.github.io</code>看到自己的博客了</p>
+
+<h3>修改配置</h3>
+
+<p>配置文件路径为<code>~/octopress/_config.yml</code>，这个文件其实就是octopress的配置文件，里面内置了一些现有的模块，你也可以新增全局的配置属性</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nl">url:</span>                <span class="err">#</span> <span class="n">For</span> <span class="n">rewriting</span> <span class="n">urls</span> <span class="k">for</span> <span class="n">RSS</span><span class="o">,</span> <span class="n">etc</span>
+</span><span class='line'><span class="nl">title:</span>              <span class="err">#</span> <span class="n">Used</span> <span class="n">in</span> <span class="n">the</span> <span class="n">header</span> <span class="n">and</span> <span class="n">title</span> <span class="n">tags</span>
+</span><span class='line'><span class="nl">subtitle:</span>           <span class="err">#</span> <span class="n">A</span> <span class="n">description</span> <span class="n">used</span> <span class="n">in</span> <span class="n">the</span> <span class="n">header</span>
+</span><span class='line'><span class="nl">author:</span>             <span class="err">#</span> <span class="n">Your</span> <span class="n">name</span><span class="o">,</span> <span class="k">for</span> <span class="n">RSS</span><span class="o">,</span> <span class="n">Copyright</span><span class="o">,</span> <span class="n">Metadata</span>
+</span><span class='line'><span class="nl">simple_search:</span>      <span class="err">#</span> <span class="n">Search</span> <span class="n">engine</span> <span class="k">for</span> <span class="n">simple</span> <span class="n">site</span> <span class="n">search</span>
+</span><span class='line'><span class="nl">description:</span>        <span class="err">#</span> <span class="n">A</span> <span class="k">default</span> <span class="n">meta</span> <span class="n">description</span> <span class="k">for</span> <span class="n">your</span> <span class="n">site</span>
+</span><span class='line'><span class="nl">date_format:</span>        <span class="err">#</span> <span class="n">Format</span> <span class="n">dates</span> <span class="n">using</span> <span class="n">Ruby</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">date</span> <span class="n">strftime</span> <span class="n">syntax</span>
+</span><span class='line'><span class="nl">subscribe_rss:</span>      <span class="err">#</span> <span class="n">Url</span> <span class="k">for</span> <span class="n">your</span> <span class="n">blog</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">feed</span><span class="o">,</span> <span class="n">defauts</span> <span class="n">to</span> <span class="o">/</span><span class="n">atom</span><span class="o">.</span><span class="na">xml</span>
+</span><span class='line'><span class="nl">subscribe_email:</span>    <span class="err">#</span> <span class="n">Url</span> <span class="n">to</span> <span class="n">subscribe</span> <span class="n">by</span> <span class="nf">email</span> <span class="o">(</span><span class="n">service</span> <span class="n">required</span><span class="o">)</span>
+</span><span class='line'><span class="nl">category_feeds:</span>     <span class="err">#</span> <span class="n">Enable</span> <span class="n">per</span> <span class="n">category</span> <span class="n">RSS</span> <span class="nf">feeds</span> <span class="o">(</span><span class="n">defaults</span> <span class="n">to</span> <span class="kc">false</span> <span class="n">in</span> <span class="mf">2.1</span><span class="o">)</span>
+</span><span class='line'><span class="nl">email:</span>              <span class="err">#</span> <span class="n">Email</span> <span class="n">address</span> <span class="k">for</span> <span class="n">the</span> <span class="n">RSS</span> <span class="n">feed</span> <span class="k">if</span> <span class="n">you</span> <span class="n">want</span> <span class="n">it</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑完成后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;settings&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装第三方主题</h3>
+
+<p>Octopress有许多第三方主题可以选择，首先在<a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">这里Github</a>上寻找喜欢的主题，点击进入对应主题的git，一般在readme上都会有安装流程，我使用的是<code>classic-martinb</code></p>
+
+<div class="github-card" data-github="imathis/octopress" data-width="400" data-height="" data-theme="default"></div>
+
+
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">cd</span> <span class="n">octopress</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">submodule</span> <span class="n">add</span> <span class="nl">git:</span><span class="c1">//github.com/martinbjeldbak/classic-martinb.git .themes/classic-martinb</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">install</span><span class="o">[</span><span class="err">&#39;</span><span class="n">classic</span><span class="o">-</span><span class="n">martinb</span><span class="err">&#39;</span><span class="o">]</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;theme&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>定制第三方主题</h3>
+
+<p>使用第三方主题也并非是一个“拎包入住”的过程，其中必然会有一些需要定制的地方。定制的过程中会涉及一些web相关的知识，但对于各位来说应该都并非难事。</p>
+
+<p>例如刚安装完greyshade之后我们会发现左边navigation上的<strong>About me</strong>是指向作者的个人主页，我们需要把这个文字连接定向到自己的个人主页上。</p>
+
+<p>这个aboutme对应的html为<code>/source/_includes/custom/navigation.html</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="o">&gt;</span><span class="n">Blog</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;http://about.me/shashankmehta&quot;</span><span class="o">&gt;</span><span class="n">About</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;/blog/archives&quot;</span><span class="o">&gt;</span><span class="n">Archives</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把其中的<code>http://about.me/shashankmehta</code>替换成需要的url，替换完之后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;theme&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>支持中文标签</h3>
+
+<p>目前版本的Octopress会在<code>/source/blog/categories</code>下创建一个<code>index.markdown</code>来作为分类的首页，但这个首页在标签有中文时会出现无法跳转的情况，原因是因为在出现中文标签时Octopress会把文件的路径中的中文转换成拼音，而在Category跳转时是直接写了中文路径，结果自然是404。解决方法是自己实现一个分类首页并处理中文。</p>
+
+<p>首先按照<a href="https://kaworu.ch/blog/2013/09/23/categories-page-with-octopress/">这里</a>的方法实现<code>index.html</code></p>
+
+<p>将<code>plugins/category_list_tag.rb</code>中的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">category_url</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">category_dir</span><span class="o">,</span> <span class="n">category</span><span class="o">.</span><span class="na">gsub</span><span class="o">(/</span><span class="n">_</span><span class="o">|</span><span class="err">\</span><span class="n">P</span><span class="o">{</span><span class="n">Word</span><span class="o">}/,</span> <span class="sc">&#39;-&#39;</span><span class="o">).</span><span class="na">gsub</span><span class="o">(/-{</span><span class="mi">2</span><span class="o">,}/,</span> <span class="sc">&#39;-&#39;</span><span class="o">).</span><span class="na">downcase</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换成</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">category_url</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">category_dir</span><span class="o">,</span> <span class="n">category</span><span class="o">.</span><span class="na">to_url</span><span class="o">.</span><span class="na">downcase</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样你的博客就可以支持中文标签的跳转了。</p>
+
+<hr />
+
+<h1>写博客</h1>
+
+<p>经过上面几部后，博客已经成功搭建，现在就可以开始写博文了。</p>
+
+<h3>创建博文</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">如果用的是终端</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">new_post</span><span class="o">[</span><span class="err">&#39;</span><span class="n">title</span><span class="err">&#39;</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span><span class="n">如果用的是ZSH</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="s">&quot;new_post[title]&quot;</span>
+</span><span class='line'><span class="err">#</span><span class="n">或者</span>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">new_post</span><span class="err">\</span><span class="o">[</span><span class="err">&#39;</span><span class="n">title</span><span class="err">&#39;\</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成的文件在<code>~/source/_posts</code>目录下</p>
+
+<h3>编辑博文</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">markdown写博文</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">preview</span> <span class="err">#</span><span class="nl">localhost:</span><span class="mi">4000</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">generate</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;comment&quot;</span>
+</span><span class='line'><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">source</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$</span> <span class="n">rake</span> <span class="n">deploy</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>后记：解决Octopress博客访问慢的问题</h1>
+
+<p>由于国内环境的原因造成了访问博客速度“惊人”，所以对Octopress进行相关改造成了必须的步骤（如果你能接受手机端打开时间超过20秒），好了废话不多讲</p>
+
+<h2>清理没用的服务</h2>
+
+<p>修改<code>_config.yml</code>，由于<code>Octopress</code>预设了一些像<code>Disqus</code>评论、<code>Github</code>仓库、<code>Twitter</code>等访问较慢的一些网站，这个相关服务在国内访问相对较慢，这里你只要把这些不需要的服务注释掉就好了</p>
+
+<h3>去除Disqus评论</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="mi">1</span> <span class="err">#</span><span class="n">Disqus</span> <span class="n">Comments</span>
+</span><span class='line'><span class="mi">2</span> <span class="err">#</span><span class="nl">disqus_short_name:</span> <span class="n">androidyue</span>
+</span><span class='line'><span class="mi">3</span> <span class="err">#</span><span class="nl">disqus_show_comment_count:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>去掉Github仓库展示</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Github</span> <span class="n">repositories</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_user:</span> <span class="n">androidyue</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_repo_count:</span> <span class="mi">11</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_show_profile_link:</span> <span class="kc">true</span>
+</span><span class='line'><span class="err">#</span><span class="nl">github_skip_forks:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Twitter按钮</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Twitter</span>
+</span><span class='line'><span class="err">#</span><span class="nl">twitter_user:</span>
+</span><span class='line'><span class="err">#</span><span class="nl">twitter_tweet_button:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Facebook Like</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Facebook</span> <span class="n">Like</span>
+</span><span class='line'><span class="err">#</span><span class="nl">facebook_like:</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>去除Google+相关</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">Google</span> <span class="o">+</span><span class="mi">1</span>
+</span><span class='line'><span class="err">#</span><span class="nl">google_plus_one:</span> <span class="kc">true</span>
+</span><span class='line'><span class="err">#</span><span class="nl">google_plus_one_size:</span> <span class="n">medium</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span><span class="n">Google</span> <span class="n">Plus</span> <span class="n">Profile</span>
+</span><span class='line'><span class="err">#</span><span class="nl">Hidden:</span> <span class="n">No</span> <span class="n">visible</span> <span class="n">button</span><span class="o">,</span> <span class="n">just</span> <span class="n">add</span> <span class="n">author</span> <span class="n">information</span> <span class="n">to</span> <span class="n">search</span> <span class="n">results</span>
+</span><span class='line'><span class="err">#</span><span class="nl">googleplus_user:</span>
+</span><span class='line'><span class="err">#</span><span class="nl">googleplus_hidden:</span> <span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>替换快速的请求资源</h2>
+
+<p>其实，真正解决加速的重要环节可能是这里，因为Octopress很多依赖于Google的库和资源</p>
+
+<h3>解决Google Analytics巨慢的问题</h3>
+
+<p><a href="http://droidyue.com/">这里</a>给出的方案是自己在七牛上存放<code>ga.js</code>(主要是<code>Google Analytics</code>的相关方法)，但是我这边遇到了HTTPS访问HTTP的问题我就直接在自己的工程目录下存放了<code>ga.js</code>，参考如下，修改<code>source/_includes/google_analytics.html</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span>     <span class="p">...</span>
+</span><span class='line'><span class="nx">$</span>     <span class="nx">_gaq</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">&#39;_trackPageview&#39;</span><span class="p">]);</span>
+</span><span class='line'><span class="nx">$</span>
+</span><span class='line'><span class="nx">$</span>     <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'><span class="nx">$</span>         <span class="kd">var</span> <span class="nx">ga</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">$</span>         <span class="nx">ga</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;text/javascript&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">$</span>         <span class="nx">ga</span><span class="p">.</span><span class="nx">async</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="nx">$</span>         <span class="nx">ga</span><span class="p">.</span><span class="nx">src</span><span class="o">=</span><span class="s1">&#39;http://xxxx.com/ga.js&#39;</span><span class="p">;</span><span class="c1">//自己工程目录或者CDN</span>
+</span><span class='line'><span class="nx">$</span>     <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>  
+</span><span class='line'><span class="nx">$</span>         <span class="nx">s</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">ga</span><span class="p">,</span> <span class="nx">s</span><span class="p">);</span>
+</span><span class='line'><span class="nx">$</span>     <span class="p">})();</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>解决fonts.googleapis.comm问题</h3>
+
+<p>问了节省大家时间，我给你们找了一个<a href="http://blog.csdn.net/maxsky/article/details/51980438">国内外优秀前端 CDN 加速服务</a>，去找一些你们自己认为信得过的CDN服务商(例如：不要选360了因为已经不再维护了)</p>
+
+<p>修改文件<code>/source/_includes/custom/head.html</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;https://fonts.cat.net/css?family=PT+Serif:regular,italic,bold,bolditalic&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/css&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;https://fonts.cat.net/css?family=PT+Sans:regular,italic,bold,bolditalic&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/css&quot;</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>解决ajax.googleapis.comm问题</h3>
+
+<p>修改<code>source/_includes/head.html</code>，还是利用上面的CDN替换<code>jquery.min.js</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;canonical&quot;</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;/favicon.png&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;icon&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;/stylesheets/screen.css&quot;</span> <span class="nx">media</span><span class="o">=</span><span class="s2">&quot;screen, projection&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/css&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;/atom.xml&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;alternate&quot;</span> <span class="nx">title</span><span class="o">=</span><span class="s2">&quot;一骑当千&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;application/atom+xml&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;/javascripts/modernizr-2.0.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;!</span><span class="nb">window</span><span class="p">.</span><span class="nx">jQuery</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">unescape</span><span class="p">(</span><span class="s1">&#39;%3Cscript src=&quot;./javascripts/libs/jquery.min.js&quot;%3E%3C/script%3E&#39;</span><span class="p">))</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="nx">$</span> <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;/javascripts/octopress.js&quot;</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/javascript&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>参考资料</h1>
+
+<ul>
+<li><a href="http://octopress.org/">http://octopress.org/</a></li>
+<li><a href="http://msching.github.io/">http://msching.github.io/</a></li>
+<li><a href="http://biaobiaoqi.me/blog/2013/03/21/building-octopress-in-github-mac/">http://biaobiaoqi.me/blog/2013/03/21/building-octopress-in-github-mac/</a></li>
+<li><a href="http://biaobiaoqi.me/blog/2013/07/10/decorate-octopress/">http://biaobiaoqi.me/blog/2013/07/10/decorate-octopress/</a></li>
+<li><a href="http://droidyue.com/blog/2014/06/22/fix-octopress-slow-loading-speed-issue-in-china-mainland/index.html">http://droidyue.com/blog/2014/06/22/fix-octopress-slow-loading-speed-issue-in-china-mainland/index.html</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
