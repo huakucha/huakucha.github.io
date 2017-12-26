@@ -1,0 +1,527 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Mac Framework注入工程模板 - 一骑当千</title>
+  <meta name="author" content="花裤衩">
+
+  
+  <meta name="description" content="前言 期初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以日记的形式记录一下流程 创建Mac &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://huakucha.github.io/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="一骑当千" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href="https://fonts.cat.net/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="https://fonts.cat.net/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+    function addBlankTargetForLinks () {
+    $('a[href^="https"]').each(function(){
+           $(this).attr('target', '_blank');
+       });
+    }
+
+    $(document).bind('DOMNodeInserted', function(event) {
+        addBlankTargetForLinks();
+    });
+</script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-109672322-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      //ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = '/javascripts/ga.js';
+      //ga.src = 'https://www.googletagmanager.com/gtag/js?id=UA-109672322-1';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><div class="header-left">
+  <hgroup>
+  <h1><a href="/">一骑当千</a></h1>
+  
+  <div class="subtitle">
+    <h2>我愿陪你走遍整个艾泽拉斯.</h2>
+  </div>
+  
+  </hgroup>
+  
+</div>
+
+<div class="header-right">
+  <ul class="main-navigation">
+ <div> 
+  <li><a href="/">主页 blog</a></li></div><div class="spacer"></div>
+     <div> 
+  <li><a href="/blog/categories">分类 categories</a></li></div><div class="spacer"></div>
+       <div> 
+  <li><a href="/blog/archives">归档 archive</a></li></div><div class="spacer"></div>
+         <div> 
+  <li><a href="/about">关于 About</a></li></div>
+</ul>
+  
+
+  <!--返回顶部开始
+<div id="full" border=1 style="width:50px; height:50px; position:fixed; right:80px; bottom:100px; z-index:100; text-align:center; background-color:rgb(114, 114, 114); cursor:pointer;">
+    <a href="#" onclick="goTop();return false;">
+            <i class="fa fa-angle-up fa-2x" aria-hidden="true" border=0 alt="返回顶部"></i>
+    </a>
+   </div>
+<script src="/javascripts/top.js" type="text/javascript"></script>
+-->
+   <!--返回顶部结束-->
+</div>
+</header>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Mac Framework注入工程模板</h1>
+    
+    
+      <p class="meta">
+          
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+<i style="color: #555;" class="fa fa-calendar fa-1x" aria-hidden="true"></i>
+<time style="color: #555;" datetime="2017-12-26T11:03:27+08:00" data-updated="true" itemprop="datePublished">
+
+Dec 26, 2017
+
+
+</time>
+
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="https://huakucha.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h1>前言</h1>
+
+<p>期初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以日记的形式记录一下流程</p>
+
+<!--more-->
+
+
+<h1>创建Mac Framework工程</h1>
+
+<p>首先看一下Xcode为我们提供的一些预设的工程模板</p>
+
+<h4>全局位置</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/Templates/Project Templates/ </span>
+</span><span class='line'>
+</span><span class='line'><span class="o">/</span><span class="nx">Applications</span><span class="o">/</span><span class="nx">Xcode</span><span class="p">.</span><span class="nx">app</span><span class="o">/</span><span class="nx">Contents</span><span class="o">/</span><span class="nx">Developer</span><span class="o">/</span><span class="nx">Library</span><span class="o">/</span><span class="nx">Xcode</span><span class="o">/</span><span class="nx">Templates</span><span class="o">/</span><span class="nx">Project</span> <span class="nx">Templates</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>用户自定义位置</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">~/</span><span class="n">Library</span><span class="o">/</span><span class="n">Developer</span><span class="o">/</span><span class="n">Xcode</span><span class="o">/</span><span class="n">Templates</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>1、由于目的工程是一个target为动态Framework的工程，所以这边直接在</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/Project Templates/Mac/Framework &amp; Library/Cocoa Framework.xctemplate</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>copy此模板放到用户自定义位置</p>
+
+<p>2、模板中除了Xcode需要展示Icon文件就一个plist文件，我们大多数的工作就是把自己要在工程创建初期需要放入的文件全都放入<code>.xctemplate</code>，并让plist知道这些文件存在</p>
+
+<p>3、在plist文件<code>Options</code>中增加<code>Definitions</code>、<code>Nodes</code>这两个属性具体可看下图:</p>
+
+<p><img src="https://huakucha.github.io/images/site.picture_url.jpeg" alt="" /></p>
+
+<h1>编写注入脚本</h1>
+
+<p>本着一劳永逸的传统（懒到没救），直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">app_name</span><span class="o">=</span><span class="s2">&quot;iMazing&quot;</span>
+</span><span class='line'><span class="nx">framework_name</span><span class="o">=</span><span class="s2">&quot;工程生成framework name&quot;</span>
+</span><span class='line'><span class="nx">app_bundle_path</span><span class="o">=</span><span class="s2">&quot;/Applications/${app_name}.app/Contents/MacOS&quot;</span>
+</span><span class='line'><span class="nx">app_executable_path</span><span class="o">=</span><span class="s2">&quot;${app_bundle_path}/${app_name}&quot;</span>
+</span><span class='line'><span class="nx">app_executable_backup_path</span><span class="o">=</span><span class="s2">&quot;${app_executable_path}_backup&quot;</span>
+</span><span class='line'><span class="nx">framework_path</span><span class="o">=</span><span class="s2">&quot;${app_bundle_path}/${framework_name}.framework&quot;</span>
+</span><span class='line'><span class="err">#</span> <span class="err">备份二进制原始可执行文件</span>
+</span><span class='line'><span class="k">if</span> <span class="p">[</span> <span class="o">!</span> <span class="o">-</span><span class="nx">f</span> <span class="s2">&quot;$app_executable_backup_path&quot;</span> <span class="p">]</span>
+</span><span class='line'><span class="nx">then</span>
+</span><span class='line'><span class="nx">cp</span> <span class="s2">&quot;$app_executable_path&quot;</span> <span class="s2">&quot;$app_executable_backup_path&quot;</span>
+</span><span class='line'><span class="nx">fi</span>
+</span><span class='line'><span class="nx">cp</span> <span class="o">-</span><span class="nx">r</span> <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${framework_name}.framework&quot;</span> <span class="nx">$</span><span class="p">{</span><span class="nx">app_bundle_path</span><span class="p">}</span>
+</span><span class='line'><span class="nx">echo</span> <span class="nx">$</span><span class="p">{</span><span class="nx">BUILT_PRODUCTS_DIR</span><span class="p">}</span><span class="o">/</span><span class="nx">$</span><span class="p">{</span><span class="nx">framework_name</span><span class="p">}.</span><span class="nx">framework</span>
+</span><span class='line'><span class="nx">echo</span> <span class="nx">$</span><span class="p">{</span><span class="nx">app_bundle_path</span><span class="p">}</span>
+</span><span class='line'><span class="p">.</span><span class="o">/</span><span class="nx">insert_dylib</span> <span class="o">--</span><span class="nx">all</span><span class="o">-</span><span class="nx">yes</span> <span class="s2">&quot;${framework_path}/${framework_name}&quot;</span> <span class="s2">&quot;$app_executable_backup_path&quot;</span> <span class="s2">&quot;$app_executable_path&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>1、首先将上面的sh脚本中的app_name改成目标APP的名字，framework_name改成工程生成的framework name</p>
+
+<p>2、在动态库的target下增加sh运行脚本 <code>$PROJECT_DIR/$PRODUCT_NAME/inject.sh</code></p>
+
+<p>3、<code>insert_dylib</code>会自动把生成的framework注入到指定的<code>app_executable</code>. <code>insert_dylib</code>我已经放到文章末尾的工程源码里面了</p>
+
+<p>（这边有个小的bug，先不加sh脚本build一下工程，在进行后续操作）</p>
+
+<h1>编写注入代码</h1>
+
+<p>iMazing的RE过程就不细讲了，有兴趣的可以去<a href="http://bbs.iosre.com/t/mac-imazing/10380">iosre 论坛</a>看一下具体细节，我这边直接给出结果</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">static</span> <span class="k">void</span> <span class="nx">__attribute__</span><span class="p">((</span><span class="nx">constructor</span><span class="p">))</span> <span class="nx">initialize</span><span class="p">(</span><span class="k">void</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">Class</span> <span class="nx">Aclass</span> <span class="o">=</span> <span class="nx">objc_getClass</span><span class="p">(</span><span class="s2">&quot;Activation&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">SEL</span> <span class="nx">selector</span> <span class="o">=</span> <span class="nx">NSSelectorFromString</span><span class="p">(</span><span class="err">@</span><span class="s2">&quot;checkIfIsActivated&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">Method</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">class_getInstanceMethod</span><span class="p">(</span><span class="nx">Aclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">IMP</span> <span class="nx">imp</span> <span class="o">=</span> <span class="nx">imp_implementationWithBlock</span><span class="p">(</span><span class="o">^</span><span class="p">(</span><span class="nx">id</span> <span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">YES</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">class_replaceMethod</span><span class="p">(</span><span class="nx">Aclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">imp</span><span class="p">,</span> <span class="nx">method_getTypeEncoding</span><span class="p">(</span><span class="nx">method</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nx">Class</span> <span class="nx">Dclass</span> <span class="o">=</span> <span class="nx">objc_getClass</span><span class="p">(</span><span class="s2">&quot;DM_SUUpdater&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">SEL</span> <span class="nx">selector</span> <span class="o">=</span> <span class="nx">NSSelectorFromString</span><span class="p">(</span><span class="err">@</span><span class="s2">&quot;checkIfConfiguredProperly&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">Method</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">class_getInstanceMethod</span><span class="p">(</span><span class="nx">Dclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">IMP</span> <span class="nx">imp</span> <span class="o">=</span> <span class="nx">imp_implementationWithBlock</span><span class="p">(</span><span class="o">^</span><span class="p">(</span><span class="nx">id</span> <span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="nx">class_replaceMethod</span><span class="p">(</span><span class="nx">Dclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">imp</span><span class="p">,</span> <span class="nx">method_getTypeEncoding</span><span class="p">(</span><span class="nx">method</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">//-[DM_SUUpdater checkIfConfiguredProperly]:</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>指定运行APP</h1>
+
+<p>其实上面流程运行之后就已经可以达到注入的目的了，其实大部分我们都是需要适时调试的，这里有个技巧
+<code>Xcode-&gt;Edit Scheme-&gt;Run-&gt;Executable-&gt;iMazing.app</code>
+进行相关注入之后，我们就可以在Xode这边实时断点跟打印相关信息了</p>
+
+<h1>工程源码以及相关链接</h1>
+
+<h3>源码</h3>
+
+<ul>
+<li><a href="www.baidu.com">模板源码</a></li>
+<li><a href="www.baidu.com">iMazing注入源码</a></li>
+</ul>
+
+
+<h3>相关链接</h3>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">花裤衩</span></span>
+
+        
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+<i style="color: #555;" class="fa fa-calendar fa-1x" aria-hidden="true"></i>
+<time style="color: #555;" datetime="1970-01-01T08:00:00+08:00" class="updated" itemprop="dateModified">Updated 
+
+
+</time>
+
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/re/'>re</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/" title="Previous Post: Python计算Dex头中的checksum和signature">&laquo; Python计算Dex头中的checksum和signature</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  <section>
+  <p>Hi, I'm <a href="https://github.com/huakucha">huakucha <i class="fa fa-space-shuttle fa-1x"></i></a>
+  </p>
+  
+
+<img src="/images/site.picture_url.jpeg" title="Ninja Attack!" >
+  <p><i class="fa fa-book fa-1x"></i> : That all the best restaurants in Tokyo are that small and do only one type of dish : sushi or tempura or teriyaki <i class="fa fa-heart fa-1x" aria-hidden="true"></i>. Because they want to do that thing well and beautifully . And it's not about quantity. It's about taking pleasure in the perfection and beauty</p>
+  <div class="social-icons">
+    
+
+    
+
+    
+<a style="text-decoration: none;" href="https://plus.google.com/u/0/105543758856554771135"<i class="fa fa-meetup fa-3x"></i></a>
+
+
+    
+    <a href="https://github.com/huakucha"><i class="fa fa-github-alt fa-3x"></i></a>
+
+    
+    <a href="https://twitter.com/ihuakucha"><i class="fa fa-twitter fa-3x"></i></a>  
+
+
+
+  </div>
+</section>
+  <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban/">Mac Framework注入工程模板</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/">Python计算Dex头中的checksum和signature</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/11/13/ji-yu-githubhe-octopressda-jian-shu-yu-zi-ji-de-bo-ke/">基于Github和Octopress搭建属于自己的博客</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="blog-categories">
+    <li class='category'><a href='/blog/categories/android/'>android (1)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/re/'>re (1)</a></li>
+
+  </ul>
+</section>
+<section>
+	<link rel="stylesheet" href="/stylesheets/music.css">
+	<div class="cube-music cube-sidebar" id="cube-music">
+		<div style="margin: 0px;" class="cube-player aplayer" id="cube-player"></div>
+	</div>
+	<script>
+
+		(function (window) {
+			window.musicModule = {}
+			window.musicModule.musicConfig = {
+				"narrow": false,
+				"autoplay": false,
+				"showlrc": 3,
+				"theme": "#b7daff",
+				"mutex": true,
+				"mode": "circulation",
+				"preload": "auto",
+				"listmaxheight": "513px",
+				"music": [
+					{
+						"title": "Dear friends",
+						"author": "TRIPLANE",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/TRIPLANE - Dear friends.mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/Dear friends - TRIPLANE.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/TRIPLANE - Dear friends.jpg"
+					},
+					{
+						"title": "Butter-Fly",
+						"author": "和田光司",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/和田光司 - Butter-Fly (ピアノヴァージョン).mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/Butter-Fly (ピアノヴァージョン) - 和田光司.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/和田光司 - Butter-Fly (ピアノヴァージョン).jpg"
+					},
+					{
+						"title": "宵闇花火",
+						"author": "葉月ゆら",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/葉月ゆら - 宵闇花火.mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/宵闇花火 - 葉月ゆら.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/葉月ゆら - 宵闇花火.jpg"
+					}
+				]
+			}
+			window.musicModule.lrcConfig = {
+				open: '开启歌词',
+				close: '关闭歌词'
+			}
+		})(window)
+	</script>
+	<script src='/javascripts/libs/Aplayer.js'></script>
+	<script src="/javascripts/music.js"></script>
+</section>
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/105543758856554771135?rel=author">
+      <img src="https://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  本站点采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享 署名-非商业性使用-相同方式共享 4.0 国际 许可协议</a>
+</p>
+
+<p>
+<span>Copyright &copy; 2017  花裤衩 -</span>
+<span class="credit">Powered by <a href="http://octopress.org">Octopress</a> using the <a href="https://github.com/fapper/classic-martinb">classic-martinb</a> theme</span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'https-huakucha-github-io';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://huakucha.github.io/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban/';
+        var disqus_url = 'https://huakucha.github.io/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

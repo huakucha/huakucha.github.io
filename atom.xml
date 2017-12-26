@@ -4,7 +4,7 @@
   <title><![CDATA[一骑当千]]></title>
   <link href="https://huakucha.github.io/atom.xml" rel="self"/>
   <link href="https://huakucha.github.io/"/>
-  <updated>2017-12-07T17:37:36+08:00</updated>
+  <updated>2017-12-26T12:26:06+08:00</updated>
   <id>https://huakucha.github.io/</id>
   <author>
     <name><![CDATA[花裤衩]]></name>
@@ -12,6 +12,169 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Mac Framework注入工程模板]]></title>
+    <link href="https://huakucha.github.io/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban/"/>
+    <updated>2017-12-26T11:03:27+08:00</updated>
+    <id>https://huakucha.github.io/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban</id>
+    <content type="html"><![CDATA[<h1>前言</h1>
+
+<p>期初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以日记的形式记录一下流程</p>
+
+<!--more-->
+
+
+<h1>创建Mac Framework工程</h1>
+
+<p>首先看一下Xcode为我们提供的一些预设的工程模板</p>
+
+<h4>全局位置</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/Templates/Project Templates/ </span>
+</span><span class='line'>
+</span><span class='line'><span class="o">/</span><span class="nx">Applications</span><span class="o">/</span><span class="nx">Xcode</span><span class="p">.</span><span class="nx">app</span><span class="o">/</span><span class="nx">Contents</span><span class="o">/</span><span class="nx">Developer</span><span class="o">/</span><span class="nx">Library</span><span class="o">/</span><span class="nx">Xcode</span><span class="o">/</span><span class="nx">Templates</span><span class="o">/</span><span class="nx">Project</span> <span class="nx">Templates</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>用户自定义位置</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">~/</span><span class="n">Library</span><span class="o">/</span><span class="n">Developer</span><span class="o">/</span><span class="n">Xcode</span><span class="o">/</span><span class="n">Templates</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>1、由于目的工程是一个target为动态Framework的工程，所以这边直接在</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/Project Templates/Mac/Framework &amp; Library/Cocoa Framework.xctemplate</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>copy此模板放到用户自定义位置</p>
+
+<p>2、模板中除了Xcode需要展示Icon文件就一个plist文件，我们大多数的工作就是把自己要在工程创建初期需要放入的文件全都放入<code>.xctemplate</code>，并让plist知道这些文件存在</p>
+
+<p>3、在plist文件<code>Options</code>中增加<code>Definitions</code>、<code>Nodes</code>这两个属性具体可看下图:</p>
+
+<p><img src="https://huakucha.github.io/images/site.picture_url.jpeg" alt="" /></p>
+
+<h1>编写注入脚本</h1>
+
+<p>本着一劳永逸的传统（懒到没救），直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">app_name</span><span class="o">=</span><span class="s2">&quot;iMazing&quot;</span>
+</span><span class='line'><span class="nx">framework_name</span><span class="o">=</span><span class="s2">&quot;工程生成framework name&quot;</span>
+</span><span class='line'><span class="nx">app_bundle_path</span><span class="o">=</span><span class="s2">&quot;/Applications/${app_name}.app/Contents/MacOS&quot;</span>
+</span><span class='line'><span class="nx">app_executable_path</span><span class="o">=</span><span class="s2">&quot;${app_bundle_path}/${app_name}&quot;</span>
+</span><span class='line'><span class="nx">app_executable_backup_path</span><span class="o">=</span><span class="s2">&quot;${app_executable_path}_backup&quot;</span>
+</span><span class='line'><span class="nx">framework_path</span><span class="o">=</span><span class="s2">&quot;${app_bundle_path}/${framework_name}.framework&quot;</span>
+</span><span class='line'><span class="err">#</span> <span class="err">备份二进制原始可执行文件</span>
+</span><span class='line'><span class="k">if</span> <span class="p">[</span> <span class="o">!</span> <span class="o">-</span><span class="nx">f</span> <span class="s2">&quot;$app_executable_backup_path&quot;</span> <span class="p">]</span>
+</span><span class='line'><span class="nx">then</span>
+</span><span class='line'><span class="nx">cp</span> <span class="s2">&quot;$app_executable_path&quot;</span> <span class="s2">&quot;$app_executable_backup_path&quot;</span>
+</span><span class='line'><span class="nx">fi</span>
+</span><span class='line'><span class="nx">cp</span> <span class="o">-</span><span class="nx">r</span> <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${framework_name}.framework&quot;</span> <span class="nx">$</span><span class="p">{</span><span class="nx">app_bundle_path</span><span class="p">}</span>
+</span><span class='line'><span class="nx">echo</span> <span class="nx">$</span><span class="p">{</span><span class="nx">BUILT_PRODUCTS_DIR</span><span class="p">}</span><span class="o">/</span><span class="nx">$</span><span class="p">{</span><span class="nx">framework_name</span><span class="p">}.</span><span class="nx">framework</span>
+</span><span class='line'><span class="nx">echo</span> <span class="nx">$</span><span class="p">{</span><span class="nx">app_bundle_path</span><span class="p">}</span>
+</span><span class='line'><span class="p">.</span><span class="o">/</span><span class="nx">insert_dylib</span> <span class="o">--</span><span class="nx">all</span><span class="o">-</span><span class="nx">yes</span> <span class="s2">&quot;${framework_path}/${framework_name}&quot;</span> <span class="s2">&quot;$app_executable_backup_path&quot;</span> <span class="s2">&quot;$app_executable_path&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>1、首先将上面的sh脚本中的app_name改成目标APP的名字，framework_name改成工程生成的framework name</p>
+
+<p>2、在动态库的target下增加sh运行脚本 <code>$PROJECT_DIR/$PRODUCT_NAME/inject.sh</code></p>
+
+<p>3、<code>insert_dylib</code>会自动把生成的framework注入到指定的<code>app_executable</code>. <code>insert_dylib</code>我已经放到文章末尾的工程源码里面了</p>
+
+<p>（这边有个小的bug，先不加sh脚本build一下工程，在进行后续操作）</p>
+
+<h1>编写注入代码</h1>
+
+<p>iMazing的RE过程就不细讲了，有兴趣的可以去<a href="http://bbs.iosre.com/t/mac-imazing/10380">iosre 论坛</a>看一下具体细节，我这边直接给出结果</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">static</span> <span class="k">void</span> <span class="nx">__attribute__</span><span class="p">((</span><span class="nx">constructor</span><span class="p">))</span> <span class="nx">initialize</span><span class="p">(</span><span class="k">void</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">Class</span> <span class="nx">Aclass</span> <span class="o">=</span> <span class="nx">objc_getClass</span><span class="p">(</span><span class="s2">&quot;Activation&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">SEL</span> <span class="nx">selector</span> <span class="o">=</span> <span class="nx">NSSelectorFromString</span><span class="p">(</span><span class="err">@</span><span class="s2">&quot;checkIfIsActivated&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">Method</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">class_getInstanceMethod</span><span class="p">(</span><span class="nx">Aclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">IMP</span> <span class="nx">imp</span> <span class="o">=</span> <span class="nx">imp_implementationWithBlock</span><span class="p">(</span><span class="o">^</span><span class="p">(</span><span class="nx">id</span> <span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">YES</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">class_replaceMethod</span><span class="p">(</span><span class="nx">Aclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">imp</span><span class="p">,</span> <span class="nx">method_getTypeEncoding</span><span class="p">(</span><span class="nx">method</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nx">Class</span> <span class="nx">Dclass</span> <span class="o">=</span> <span class="nx">objc_getClass</span><span class="p">(</span><span class="s2">&quot;DM_SUUpdater&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">SEL</span> <span class="nx">selector</span> <span class="o">=</span> <span class="nx">NSSelectorFromString</span><span class="p">(</span><span class="err">@</span><span class="s2">&quot;checkIfConfiguredProperly&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">Method</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">class_getInstanceMethod</span><span class="p">(</span><span class="nx">Dclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">IMP</span> <span class="nx">imp</span> <span class="o">=</span> <span class="nx">imp_implementationWithBlock</span><span class="p">(</span><span class="o">^</span><span class="p">(</span><span class="nx">id</span> <span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="nx">class_replaceMethod</span><span class="p">(</span><span class="nx">Dclass</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">imp</span><span class="p">,</span> <span class="nx">method_getTypeEncoding</span><span class="p">(</span><span class="nx">method</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">//-[DM_SUUpdater checkIfConfiguredProperly]:</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>指定运行APP</h1>
+
+<p>其实上面流程运行之后就已经可以达到注入的目的了，其实大部分我们都是需要适时调试的，这里有个技巧
+<code>Xcode-&gt;Edit Scheme-&gt;Run-&gt;Executable-&gt;iMazing.app</code>
+进行相关注入之后，我们就可以在Xode这边实时断点跟打印相关信息了</p>
+
+<h1>工程源码以及相关链接</h1>
+
+<h3>源码</h3>
+
+<ul>
+<li><a href="www.baidu.com">模板源码</a></li>
+<li><a href="www.baidu.com">iMazing注入源码</a></li>
+</ul>
+
+
+<h3>相关链接</h3>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Python计算Dex头中的checksum和signature]]></title>

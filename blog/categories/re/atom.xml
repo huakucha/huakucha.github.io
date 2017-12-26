@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Re | 一骑当千]]></title>
+  <link href="https://huakucha.github.io/blog/categories/re/atom.xml" rel="self"/>
+  <link href="https://huakucha.github.io/"/>
+  <updated>2017-12-26T12:26:06+08:00</updated>
+  <id>https://huakucha.github.io/</id>
+  <author>
+    <name><![CDATA[花裤衩]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Mac Framework注入工程模板]]></title>
+    <link href="https://huakucha.github.io/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban/"/>
+    <updated>2017-12-26T11:03:27+08:00</updated>
+    <id>https://huakucha.github.io/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban</id>
+    <content type="html"><![CDATA[<h1>前言</h1>
+
+<p>期初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以日记的形式记录一下流程</p>
+
+<!--more-->
+
+
+<h1>创建Mac Framework工程</h1>
+
+<p>首先看一下Xcode为我们提供的一些预设的工程模板</p>
+
+<h4>全局位置</h4>
+
+<pre><code class="javascript">/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/Templates/Project Templates/ 
+
+/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/Project Templates
+</code></pre>
+
+<h4>用户自定义位置</h4>
+
+<pre><code class="java">~/Library/Developer/Xcode/Templates 
+</code></pre>
+
+<p>1、由于目的工程是一个target为动态Framework的工程，所以这边直接在</p>
+
+<pre><code class="javascript">/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/Project Templates/Mac/Framework &amp; Library/Cocoa Framework.xctemplate
+</code></pre>
+
+<p>copy此模板放到用户自定义位置</p>
+
+<p>2、模板中除了Xcode需要展示Icon文件就一个plist文件，我们大多数的工作就是把自己要在工程创建初期需要放入的文件全都放入<code>.xctemplate</code>，并让plist知道这些文件存在</p>
+
+<p>3、在plist文件<code>Options</code>中增加<code>Definitions</code>、<code>Nodes</code>这两个属性具体可看下图:</p>
+
+<p><img src="https://huakucha.github.io/images/site.picture_url.jpeg" alt="" /></p>
+
+<h1>编写注入脚本</h1>
+
+<p>本着一劳永逸的传统（懒到没救），直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂</p>
+
+<pre><code class="javascript">app_name="iMazing"
+framework_name="工程生成framework name"
+app_bundle_path="/Applications/${app_name}.app/Contents/MacOS"
+app_executable_path="${app_bundle_path}/${app_name}"
+app_executable_backup_path="${app_executable_path}_backup"
+framework_path="${app_bundle_path}/${framework_name}.framework"
+# 备份二进制原始可执行文件
+if [ ! -f "$app_executable_backup_path" ]
+then
+cp "$app_executable_path" "$app_executable_backup_path"
+fi
+cp -r "${BUILT_PRODUCTS_DIR}/${framework_name}.framework" ${app_bundle_path}
+echo ${BUILT_PRODUCTS_DIR}/${framework_name}.framework
+echo ${app_bundle_path}
+./insert_dylib --all-yes "${framework_path}/${framework_name}" "$app_executable_backup_path" "$app_executable_path"
+</code></pre>
+
+<p>1、首先将上面的sh脚本中的app_name改成目标APP的名字，framework_name改成工程生成的framework name</p>
+
+<p>2、在动态库的target下增加sh运行脚本 <code>$PROJECT_DIR/$PRODUCT_NAME/inject.sh</code></p>
+
+<p>3、<code>insert_dylib</code>会自动把生成的framework注入到指定的<code>app_executable</code>. <code>insert_dylib</code>我已经放到文章末尾的工程源码里面了</p>
+
+<p>（这边有个小的bug，先不加sh脚本build一下工程，在进行后续操作）</p>
+
+<h1>编写注入代码</h1>
+
+<p>iMazing的RE过程就不细讲了，有兴趣的可以去<a href="http://bbs.iosre.com/t/mac-imazing/10380">iosre 论坛</a>看一下具体细节，我这边直接给出结果</p>
+
+<pre><code class="javascript">static void __attribute__((constructor)) initialize(void) {
+
+    Class Aclass = objc_getClass("Activation");
+    SEL selector = NSSelectorFromString(@"checkIfIsActivated");
+    Method method = class_getInstanceMethod(Aclass, selector);
+    IMP imp = imp_implementationWithBlock(^(id self) {
+        return YES;
+    });
+
+    class_replaceMethod(Aclass, selector, imp, method_getTypeEncoding(method));
+    {
+        Class Dclass = objc_getClass("DM_SUUpdater");
+        SEL selector = NSSelectorFromString(@"checkIfConfiguredProperly");
+        Method method = class_getInstanceMethod(Dclass, selector);
+        IMP imp = imp_implementationWithBlock(^(id self) {
+            return;
+        });
+        class_replaceMethod(Dclass, selector, imp, method_getTypeEncoding(method));
+    }
+    //-[DM_SUUpdater checkIfConfiguredProperly]:
+}
+</code></pre>
+
+<h1>指定运行APP</h1>
+
+<p>其实上面流程运行之后就已经可以达到注入的目的了，其实大部分我们都是需要适时调试的，这里有个技巧
+<code>Xcode-&gt;Edit Scheme-&gt;Run-&gt;Executable-&gt;iMazing.app</code>
+进行相关注入之后，我们就可以在Xode这边实时断点跟打印相关信息了</p>
+
+<h1>工程源码以及相关链接</h1>
+
+<h3>源码</h3>
+
+<ul>
+<li><a href="www.baidu.com">模板源码</a></li>
+<li><a href="www.baidu.com">iMazing注入源码</a></li>
+</ul>
+
+
+<h3>相关链接</h3>
+]]></content>
+  </entry>
+  
+</feed>
