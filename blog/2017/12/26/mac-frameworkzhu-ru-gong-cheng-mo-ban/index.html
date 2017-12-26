@@ -9,7 +9,7 @@
   <meta name="author" content="花裤衩">
 
   
-  <meta name="description" content="前言 期初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以日记的形式记录一下流程 创建Mac &hellip;">
+  <meta name="description" content="前言 起初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以文章的形式记录一下流程 创建Mac &hellip;">
   
 
   <!-- http://t.co/dKP3o1e
@@ -144,7 +144,7 @@ Dec 26, 2017
 
 <div class="entry-content"><h1>前言</h1>
 
-<p>期初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以日记的形式记录一下流程</p>
+<p>起初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以文章的形式记录一下流程</p>
 
 <!--more-->
 
@@ -188,7 +188,7 @@ Dec 26, 2017
 
 <h1>编写注入脚本</h1>
 
-<p>本着一劳永逸的传统（懒到没救），直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂</p>
+<p>本着一劳永逸（懒到没救）的传统，直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -284,19 +284,25 @@ Dec 26, 2017
 
 <p>其实上面流程运行之后就已经可以达到注入的目的了，其实大部分我们都是需要适时调试的，这里有个技巧
 <code>Xcode-&gt;Edit Scheme-&gt;Run-&gt;Executable-&gt;iMazing.app</code>
-进行相关注入之后，我们就可以在Xode这边实时断点跟打印相关信息了</p>
+进行相关注入之后，Xcode会帮我们运行起指定的APP，这时就可以在Xcode实时断点跟打印相关信息了</p>
 
 <h1>工程源码以及相关链接</h1>
 
 <h3>源码</h3>
 
 <ul>
-<li><a href="www.baidu.com">模板源码</a></li>
-<li><a href="www.baidu.com">iMazing注入源码</a></li>
+<li><a href="https://github.com/huakucha/macframeworkinject">模板源码</a></li>
+<li><a href="https://github.com/huakucha/macframeworkinject">iMazing注入源码</a></li>
 </ul>
 
 
 <h3>相关链接</h3>
+
+<ul>
+<li><a href="https://github.com/AloneMonkey/MonkeyDev">https://github.com/AloneMonkey/MonkeyDev</a></li>
+<li><a href="https://www.jianshu.com/p/738d5697e869">https://www.jianshu.com/p/738d5697e869</a></li>
+</ul>
+
 </div>
 
 
