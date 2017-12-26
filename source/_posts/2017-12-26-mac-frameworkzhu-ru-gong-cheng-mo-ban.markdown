@@ -8,7 +8,7 @@ categories: [RE]
 ---
 
 #前言
-期初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以日记的形式记录一下流程
+起初写mac工程模板的目的就是为了方便自己在Mac App framework注入的时候懒得每次搭建相应的环境和一系列工具类（主要是自己懒），自己之前做过IOS的文件模板（特别是大工程后期模块化之后特别方便），没接触过工程模板的配置，也借此以文章的形式记录一下流程
 <!--more-->
 
 #创建Mac Framework工程
@@ -40,7 +40,7 @@ copy此模板放到用户自定义位置
 ![上图为plist文件数据](/images/2017-12-26/node_plist.jpeg)
 
 #编写注入脚本
-本着一劳永逸的传统（懒到没救），直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂
+本着一劳永逸（懒到没救）的传统，直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂
 
 ```javascript
 app_name="iMazing"
@@ -101,11 +101,13 @@ static void __attribute__((constructor)) initialize(void) {
 #指定运行APP
 其实上面流程运行之后就已经可以达到注入的目的了，其实大部分我们都是需要适时调试的，这里有个技巧
 ```Xcode->Edit Scheme->Run->Executable->iMazing.app```
-进行相关注入之后，我们就可以在Xode这边实时断点跟打印相关信息了
+进行相关注入之后，Xcode会帮我们运行起指定的APP，这时就可以在Xcode实时断点跟打印相关信息了
 
 #工程源码以及相关链接
 ###源码
-* [模板源码](www.baidu.com)
-* [iMazing注入源码](www.baidu.com)
+* [模板源码](https://github.com/huakucha/macframeworkinject)
+* [iMazing注入源码](https://github.com/huakucha/macframeworkinject)
 
 ###相关链接
+* https://github.com/AloneMonkey/MonkeyDev
+* https://www.jianshu.com/p/738d5697e869
