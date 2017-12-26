@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Re | 一骑当千]]></title>
   <link href="https://huakucha.github.io/blog/categories/re/atom.xml" rel="self"/>
   <link href="https://huakucha.github.io/"/>
-  <updated>2017-12-26T12:26:06+08:00</updated>
+  <updated>2017-12-26T12:36:14+08:00</updated>
   <id>https://huakucha.github.io/</id>
   <author>
     <name><![CDATA[花裤衩]]></name>
@@ -52,7 +52,7 @@
 
 <p>3、在plist文件<code>Options</code>中增加<code>Definitions</code>、<code>Nodes</code>这两个属性具体可看下图:</p>
 
-<p><img src="https://huakucha.github.io/images/site.picture_url.jpeg" alt="" /></p>
+<p><img src="images/2017-12-26/node_plist.jpeg" alt="上图为plist文件数据" /></p>
 
 <h1>编写注入脚本</h1>
 
