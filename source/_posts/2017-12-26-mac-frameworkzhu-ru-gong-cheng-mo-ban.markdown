@@ -37,7 +37,8 @@ copy此模板放到用户自定义位置
 
 3、在plist文件```Options```中增加```Definitions```、```Nodes```这两个属性具体可看下图:
 
-![](https://huakucha.github.io/images/site.picture_url.jpeg)
+![上图为plist文件数据](images/2017-12-26/node_plist.jpeg)
+
 #编写注入脚本
 本着一劳永逸的传统（懒到没救），直接在动态Framework生成之后直接注入到指定APP（以下以iMazing为例）,脚本不是很复杂
 
