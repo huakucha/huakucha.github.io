@@ -1,0 +1,502 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Jenkins解析IOS Crash Log - 一骑当千</title>
+  <meta name="author" content="花裤衩">
+
+  
+  <meta name="description" content="前言 其实市面上已经有很多崩溃收集平台上了bugly、fabric等，但也会有少量的Crash log是以测试人员提供，这些日志log一般是从手机通过Xcode导出,当我们从设备中导出日志时，调用栈是一串地址，并不能看懂，此时所需的是对其进行符号化（symbolicate）,然而像低内存导致的 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://huakucha.github.io/blog/2018/09/28/jenkinsjie-xi-ios-crash-log">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="一骑当千" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href="https://fonts.cat.net/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="https://fonts.cat.net/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+    function addBlankTargetForLinks () {
+    $('a[href^="https"]').each(function(){
+           $(this).attr('target', '_blank');
+       });
+    }
+
+    $(document).bind('DOMNodeInserted', function(event) {
+        addBlankTargetForLinks();
+    });
+</script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-109672322-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      //ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = '/javascripts/ga.js';
+      //ga.src = 'https://www.googletagmanager.com/gtag/js?id=UA-109672322-1';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><div class="header-left">
+  <hgroup>
+  <h1><a href="/">一骑当千</a></h1>
+  
+  <div class="subtitle">
+    <h2>我愿陪你走遍整个艾泽拉斯.</h2>
+  </div>
+  
+  </hgroup>
+  
+</div>
+
+<div class="header-right">
+  <ul class="main-navigation">
+ <div> 
+  <li><a href="/">主页 blog</a></li></div><div class="spacer"></div>
+     <div> 
+  <li><a href="/blog/categories">分类 categories</a></li></div><div class="spacer"></div>
+       <div> 
+  <li><a href="/blog/archives">归档 archive</a></li></div><div class="spacer"></div>
+         <div> 
+  <li><a href="/about">关于 About</a></li></div>
+</ul>
+  
+
+  <!--返回顶部开始
+<div id="full" border=1 style="width:50px; height:50px; position:fixed; right:80px; bottom:100px; z-index:100; text-align:center; background-color:rgb(114, 114, 114); cursor:pointer;">
+    <a href="#" onclick="goTop();return false;">
+            <i class="fa fa-angle-up fa-2x" aria-hidden="true" border=0 alt="返回顶部"></i>
+    </a>
+   </div>
+<script src="/javascripts/top.js" type="text/javascript"></script>
+-->
+   <!--返回顶部结束-->
+</div>
+</header>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Jenkins解析IOS Crash Log</h1>
+    
+    
+      <p class="meta">
+          
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+<i style="color: #555;" class="fa fa-calendar fa-1x" aria-hidden="true"></i>
+<time style="color: #555;" datetime="2018-09-28T12:01:26+08:00" data-updated="true" itemprop="datePublished">
+
+Sep 28, 2018
+
+
+</time>
+
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="https://huakucha.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h1>前言</h1>
+
+<p>其实市面上已经有很多崩溃收集平台上了bugly、fabric等，但也会有少量的Crash log是以测试人员提供，这些日志log一般是从手机通过Xcode导出,当我们从设备中导出日志时，调用栈是一串地址，并不能看懂，此时所需的是对其进行符号化（symbolicate）,然而像低内存导致的 crash，那么是没有调用栈的，这部分应该在收到内存警告的时候进行处理</p>
+
+<!--more-->
+
+
+<h1>Crash 日志生成步骤</h1>
+
+<p>通过官方文档，来看看生成步骤
+<img src="/images/2018/ios_crash_flow.png" alt="上图为plist文件数据" /></p>
+
+<p>如果想深入了解Crash 符号化的相关内容文末会给出相关链接,扫盲部分本文就不在重复了,本文的重点是提供Jenkins解析IOS Crash Log的一段Python脚本对log文件进行符号化(部分符号化、未符号化&mdash;>完全符号化 的过程)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='Python'><span class='line'><span class="kn">import</span> <span class="nn">re</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">getopt</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">commands</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#获取UUID</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">getUUID</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">uuid</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;&lt;(.*)&gt;&#39;</span><span class="p">,</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">UUID</span> <span class="o">=</span> <span class="n">uuid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;-&#39;</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="o">+</span><span class="s">&#39;-&#39;</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span> <span class="o">+</span><span class="s">&#39;-&#39;</span> <span class="o">+</span><span class="n">uuid</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;-&quot;</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">UUID</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">analyzeCrashLog</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span><span class="n">outputfile</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#1</span>
+</span><span class='line'>    <span class="n">crashlog</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">getoutput</span><span class="p">(</span><span class="s">&#39;grep --after-context=1000 &quot;Binary Images:&quot; &#39;</span> <span class="o">+</span> <span class="n">inputfile</span> <span class="o">+</span> <span class="s">&#39;  | grep &quot;XXXXX arm&quot;&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c">#2</span>
+</span><span class='line'>    <span class="n">uuid</span> <span class="o">=</span> <span class="n">getUUID</span><span class="p">(</span><span class="n">crashlog</span><span class="p">)</span>
+</span><span class='line'>    <span class="c">#3</span>
+</span><span class='line'>    <span class="n">path</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">getoutput</span><span class="p">(</span><span class="s">&#39;mdfind &quot;com_apple_xcode_dsym_uuids == &quot; &#39;</span><span class="o">+</span> <span class="n">uuid</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s">&#39;/dSYMs/xxxxx.app.dSYM&#39;</span>
+</span><span class='line'>    <span class="n">path</span> <span class="o">=</span> <span class="s">&quot;&#39;&quot;</span><span class="o">+</span><span class="n">path</span><span class="o">+</span><span class="s">&quot;&#39;&quot;</span>
+</span><span class='line'>    <span class="c">#4</span>
+</span><span class='line'>    <span class="n">ttt</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">getoutput</span><span class="p">(</span><span class="s">&#39;/Users/iOS_Team/CrashAnalysis/symbolicatecrash &#39;</span><span class="o">+</span> <span class="n">inputfile</span> <span class="o">+</span><span class="s">&#39; -d &#39;</span><span class="o">+</span> <span class="n">path</span> <span class="o">+</span><span class="s">&#39; -o xxxx-IOS-Crash.crash&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">ttt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">inputfile</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+</span><span class='line'>    <span class="n">outputfile</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+</span><span class='line'>    <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">getopt</span><span class="o">.</span><span class="n">getopt</span><span class="p">(</span><span class="n">argv</span><span class="p">,</span><span class="s">&quot;hi:o:&quot;</span><span class="p">,[</span><span class="s">&quot;ifile=&quot;</span><span class="p">,</span><span class="s">&quot;ofile=&quot;</span><span class="p">])</span>
+</span><span class='line'>    <span class="k">except</span> <span class="n">getopt</span><span class="o">.</span><span class="n">GetoptError</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">opt</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="s">&#39;-h&#39;</span><span class="p">:</span>
+</span><span class='line'>         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</span><span class='line'>      <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;-i&quot;</span><span class="p">,</span> <span class="s">&quot;--ifile&quot;</span><span class="p">):</span>
+</span><span class='line'>         <span class="n">inputfile</span> <span class="o">=</span> <span class="n">arg</span>
+</span><span class='line'>      <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;-o&quot;</span><span class="p">,</span> <span class="s">&quot;--ofile&quot;</span><span class="p">):</span>
+</span><span class='line'>         <span class="n">outputfile</span> <span class="o">=</span> <span class="n">arg</span>
+</span><span class='line'>    <span class="n">analyzeCrashLog</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span><span class="n">outputfile</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class='line'>   <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述过程除去加载log文件大概四步(内部的xxxx一般是工程名相关，自行更改解析)</p>
+
+<ul>
+<li>1、找到包含 Binary Image Name 对应的二进制 UUID</li>
+<li>2、解析UUID并格式化</li>
+<li>3、执行mdfind命令找到打包机打包产生的符号表文件位置</li>
+<li>4、symbolicatecrash符号化log文件并输出至指定文件</li>
+</ul>
+
+
+<h1>最后</h1>
+
+<h3>相关链接</h3>
+
+<ul>
+<li><a href="http://saitjr.com/ios/symbolicatecrash-1.html">http://saitjr.com/ios/symbolicatecrash-1.html</a></li>
+<li><a href="http://saitjr.com/ios/symbolicatecrash-2.html">http://saitjr.com/ios/symbolicatecrash-2.html</a></li>
+<li><a href="http://saitjr.com/ios/symbolicatecrash-3.html">http://saitjr.com/ios/symbolicatecrash-3.html</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">花裤衩</span></span>
+
+        
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+<i style="color: #555;" class="fa fa-calendar fa-1x" aria-hidden="true"></i>
+<time style="color: #555;" datetime="1970-01-01T08:00:00+08:00" class="updated" itemprop="dateModified">Updated 
+
+
+</time>
+
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>ios</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban/" title="Previous Post: Mac framework注入工程模板">&laquo; Mac framework注入工程模板</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  <section>
+  <p>Hi, I'm <a href="https://github.com/huakucha">huakucha <i class="fa fa-space-shuttle fa-1x"></i></a>
+  </p>
+  
+
+<img src="/images/site.picture_url.jpeg" title="Ninja Attack!" >
+  <p><i class="fa fa-book fa-1x"></i> : That all the best restaurants in Tokyo are that small and do only one type of dish : sushi or tempura or teriyaki <i class="fa fa-heart fa-1x" aria-hidden="true"></i>. Because they want to do that thing well and beautifully . And it's not about quantity. It's about taking pleasure in the perfection and beauty</p>
+  <div class="social-icons">
+    
+
+    
+
+    
+<a style="text-decoration: none;" href="https://plus.google.com/u/0/105543758856554771135"<i class="fa fa-meetup fa-3x"></i></a>
+
+
+    
+    <a href="https://github.com/huakucha"><i class="fa fa-github-alt fa-3x"></i></a>
+
+    
+    <a href="https://twitter.com/ihuakucha"><i class="fa fa-twitter fa-3x"></i></a>  
+
+
+
+  </div>
+</section>
+  <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2018/09/28/jenkinsjie-xi-ios-crash-log/">Jenkins解析IOS Crash Log</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/12/26/mac-frameworkzhu-ru-gong-cheng-mo-ban/">Mac Framework注入工程模板</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/11/15/pythonji-suan-dextou-zhong-de-checksumhe-signature/">Python计算Dex头中的checksum和signature</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/11/13/ji-yu-githubhe-octopressda-jian-shu-yu-zi-ji-de-bo-ke/">基于Github和Octopress搭建属于自己的博客</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="blog-categories">
+    <li class='category'><a href='/blog/categories/android/'>android (1)</a></li>
+<li class='category'><a href='/blog/categories/ios/'>ios (1)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/re/'>re (1)</a></li>
+
+  </ul>
+</section>
+<section>
+	<link rel="stylesheet" href="/stylesheets/music.css">
+	<div class="cube-music cube-sidebar" id="cube-music">
+		<div style="margin: 0px;" class="cube-player aplayer" id="cube-player"></div>
+	</div>
+	<script>
+
+		(function (window) {
+			window.musicModule = {}
+			window.musicModule.musicConfig = {
+				"narrow": false,
+				"autoplay": false,
+				"showlrc": 3,
+				"theme": "#b7daff",
+				"mutex": true,
+				"mode": "circulation",
+				"preload": "auto",
+				"listmaxheight": "513px",
+				"music": [
+					{
+						"title": "Dear friends",
+						"author": "TRIPLANE",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/TRIPLANE - Dear friends.mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/Dear friends - TRIPLANE.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/TRIPLANE - Dear friends.jpg"
+					},
+					{
+						"title": "Butter-Fly",
+						"author": "和田光司",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/和田光司 - Butter-Fly (ピアノヴァージョン).mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/Butter-Fly (ピアノヴァージョン) - 和田光司.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/和田光司 - Butter-Fly (ピアノヴァージョン).jpg"
+					},
+					{
+						"title": "宵闇花火",
+						"author": "葉月ゆら",
+						"url": "https://cube-1252774894.cosgz.myqcloud.com/music/source/葉月ゆら - 宵闇花火.mp3",
+						"lrc": "https://cube-1252774894.cosgz.myqcloud.com/music/lrc/宵闇花火 - 葉月ゆら.lrc",
+						"pic": "https://cube-1252774894.cosgz.myqcloud.com/music/image/葉月ゆら - 宵闇花火.jpg"
+					}
+				]
+			}
+			window.musicModule.lrcConfig = {
+				open: '开启歌词',
+				close: '关闭歌词'
+			}
+		})(window)
+	</script>
+	<script src='/javascripts/libs/Aplayer.js'></script>
+	<script src="/javascripts/music.js"></script>
+</section>
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/105543758856554771135?rel=author">
+      <img src="https://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  本站点采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享 署名-非商业性使用-相同方式共享 4.0 国际 许可协议</a>
+</p>
+
+<p>
+<span>Copyright &copy; 2018  花裤衩 -</span>
+<span class="credit">Powered by <a href="http://octopress.org">Octopress</a> using the <a href="https://github.com/fapper/classic-martinb">classic-martinb</a> theme</span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'https-huakucha-github-io';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://huakucha.github.io/blog/2018/09/28/jenkinsjie-xi-ios-crash-log/';
+        var disqus_url = 'https://huakucha.github.io/blog/2018/09/28/jenkinsjie-xi-ios-crash-log/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
